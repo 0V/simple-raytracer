@@ -1,5 +1,5 @@
-#ifndef RAYTRACER_VECTOR3D_H_
-#define RAYTRACER_VECTOR3D_H_
+#ifndef RAyTRACER_VECTOR3D_H_
+#define RAyTRACER_VECTOR3D_H_
 
 #include <cstddef>
 #include <cmath>
@@ -9,11 +9,11 @@ class Vector3d
 {
 private:
   T DefaultValue = T();
-  T X;
-  T Y;
-  T Z;
 
 public:
+  T x;
+  T y;
+  T z;
   //! Sets all members to zero
   Vector3d();
 
@@ -27,14 +27,14 @@ public:
 
   // Get-Set methods
 
-  const T &getX() const;
-  void setX(const T &newX);
+  const T &getx() const;
+  void setx(const T &newx);
 
-  const T &getY() const;
-  void setY(const T &newY);
+  const T &gety() const;
+  void sety(const T &newy);
 
-  const T &getZ() const;
-  void setZ(const T &newZ);
+  const T &getz() const;
+  void setz(const T &newz);
 
   void getv(T buffer[3]) const;
   void setv(const T coords[3]);
@@ -102,7 +102,7 @@ public:
   //! Reflects *this according to a surface's normal
   const Vector3d getReflection(const Vector3d &surfaceNormal) const;
 
-  //! Rotates *this about an origin, using Euler angles( X=pitch, Y=yaw, Z=roll)
+  //! Rotates *this about an origin, using Euler angles( x=pitch, y=yaw, z=roll)
   const Vector3d getRotationEuler(const Vector3d &angles,
                                   const Vector3d &origin = Vector3d(), bool degs = true, bool ccw = true) const;
 
@@ -113,95 +113,95 @@ public:
 
 template <typename T>
 inline Vector3d<T>::Vector3d()
-    : X(0), Y(0), Z(0)
+    : x(0), y(0), z(0)
 {
 }
 
 template <typename T>
 template <typename R>
 inline Vector3d<T>::Vector3d(const Vector3d<R> &other)
-    : X(other.X), Y(other.Y), Z(other.Z)
+    : x(other.x), y(other.y), z(other.z)
 {
 }
 
 template <typename T>
 inline Vector3d<T>::Vector3d(const T &x, const T &y, const T &z)
-    : X(x), Y(y), Z(z)
+    : x(x), y(y), z(z)
 {
 }
 
 template <typename T>
 inline Vector3d<T>::Vector3d(const T coords[3])
-    : X(coords[0]), Y(coords[1]), Z(coords[2])
+    : x(coords[0]), y(coords[1]), z(coords[2])
 {
 }
 
 template <typename T>
-inline const T &Vector3d<T>::getX() const
+inline const T &Vector3d<T>::getx() const
 {
-  return X;
+  return x;
 }
 
 template <typename T>
-inline void Vector3d<T>::setX(const T &newX)
+inline void Vector3d<T>::setx(const T &newx)
 {
-  X = newX;
+  x = newx;
 }
 
 template <typename T>
-inline const T &Vector3d<T>::getY() const
+inline const T &Vector3d<T>::gety() const
 {
-  return Y;
+  return y;
 }
 
 template <typename T>
-inline void Vector3d<T>::setY(const T &newY)
+inline void Vector3d<T>::sety(const T &newy)
 {
-  Y = newY;
+  y = newy;
 }
 
 template <typename T>
-inline const T &Vector3d<T>::getZ() const
+inline const T &Vector3d<T>::getz() const
 {
-  return Z;
+  return z;
 }
 
 template <typename T>
-inline void Vector3d<T>::setZ(const T &newZ)
+inline void Vector3d<T>::setz(const T &newz)
 {
-  Z = newZ;
+  z = newz;
 }
 
 template <typename T>
 inline void Vector3d<T>::getv(T buffer[3]) const
 {
-  buffer[0] = X;
-  buffer[1] = Y;
-  buffer[2] = Z;
+  buffer[0] = x;
+  buffer[1] = y;
+  buffer[2] = z;
 }
 
 template <typename T>
 inline void Vector3d<T>::setv(const T coords[3])
 {
-  X = coords[0];
-  Y = coords[1];
-  Z = coords[2];
+  x = coords[0];
+  y = coords[1];
+  z = coords[2];
 }
 
 template <typename T>
 inline void Vector3d<T>::get(T &x, T &y, T &z) const
 {
-  x = X;
-  y = Y;
-  z = Z;
+  x = x;
+  y = y;
+  z = z;
 }
 
 template <typename T>
 inline void Vector3d<T>::set(const T &x, const T &y, const T &z)
 {
-  X = x;
-  Y = y;
-  Z = z;
+  x = x;
+  y = y;
+  z = z;
 }
 
 template <typename T>
@@ -210,11 +210,11 @@ inline const T &Vector3d<T>::operator[](size_t index) const
   switch (index)
   {
   case 0:
-    return X;
+    return x;
   case 1:
-    return Y;
+    return y;
   case 2:
-    return Z;
+    return z;
   }
 
   return T();
@@ -226,11 +226,11 @@ inline T &Vector3d<T>::operator[](size_t index)
   switch (index)
   {
   case 0:
-    return X;
+    return x;
   case 1:
-    return Y;
+    return y;
   case 2:
-    return Z;
+    return z;
   }
 
   return DefaultValue;
@@ -242,11 +242,11 @@ inline const T &Vector3d<T>::operator()(size_t column) const
   switch (column)
   {
   case 1:
-    return X;
+    return x;
   case 2:
-    return Y;
+    return y;
   case 3:
-    return Z;
+    return z;
   }
 
   return T();
@@ -258,11 +258,11 @@ inline T &Vector3d<T>::operator()(size_t column)
   switch (column)
   {
   case 1:
-    return X;
+    return x;
   case 2:
-    return Y;
+    return y;
   case 3:
-    return Z;
+    return z;
   }
 
   return DefaultValue;
@@ -277,7 +277,7 @@ inline const Vector3d<T> Vector3d<T>::operator+() const
 template <typename T>
 inline const Vector3d<T> Vector3d<T>::operator+(const Vector3d &other) const
 {
-  return Vector3d(X + other.X, Y + other.Y, Z + other.Z);
+  return Vector3d(x + other.x, y + other.y, z + other.z);
 }
 
 template <typename T>
@@ -289,13 +289,13 @@ inline Vector3d<T> &Vector3d<T>::operator+=(const Vector3d &other)
 template <typename T>
 inline const Vector3d<T> Vector3d<T>::operator-() const
 {
-  return Vector3d(-X, -Y, -Z);
+  return Vector3d(-x, -y, -z);
 }
 
 template <typename T>
 inline const Vector3d<T> Vector3d<T>::operator-(const Vector3d &other) const
 {
-  return Vector3d(X - other.X, Y - other.Y, Z - other.Z);
+  return Vector3d(x - other.x, y - other.y, z - other.z);
 }
 
 template <typename T>
@@ -307,7 +307,7 @@ inline Vector3d<T> &Vector3d<T>::operator-=(const Vector3d &other)
 template <typename T>
 inline const Vector3d<T> Vector3d<T>::operator*(const T &scalar) const
 {
-  return Vector3d(X * scalar, Y * scalar, Z * scalar);
+  return Vector3d(x * scalar, y * scalar, z * scalar);
 }
 
 template <typename T>
@@ -319,7 +319,7 @@ inline Vector3d<T> &Vector3d<T>::operator*=(const T &scalar)
 template <typename T>
 inline const Vector3d<T> Vector3d<T>::operator/(const T &scalar) const
 {
-  return Vector3d(X / scalar, Y / scalar, Z / scalar);
+  return Vector3d(x / scalar, y / scalar, z / scalar);
 }
 
 template <typename T>
@@ -331,15 +331,15 @@ inline Vector3d<T> &Vector3d<T>::operator/=(const T &scalar)
 template <typename T>
 inline const T Vector3d<T>::operator*(const Vector3d &other) const
 {
-  return X * other.X + Y * other.Y + Z * other.Z;
+  return x * other.x + y * other.y + z * other.z;
 }
 
 template <typename T>
 inline const Vector3d<T> Vector3d<T>::operator%(const Vector3d &other) const
 {
-  return Vector3d(Y * other.Z - Z * other.Y,
-                  Z * other.X - X * other.Z,
-                  X * other.Y - Y * other.X);
+  return Vector3d(y * other.z - z * other.y,
+                  z * other.x - x * other.z,
+                  x * other.y - y * other.x);
 }
 
 template <typename T>
@@ -351,7 +351,7 @@ inline Vector3d<T> &Vector3d<T>::operator%=(const Vector3d &other)
 template <typename T>
 inline const T Vector3d<T>::getSqrLen() const
 {
-  return X * X + Y * Y + Z * Z;
+  return x * x + y * y + z * z;
 }
 
 template <typename T>
@@ -404,23 +404,23 @@ inline const Vector3d<T> Vector3d<T>::
   {
     const T degToRad = T(M_PI) / 360;
 
-    sin_phi = std::sin(angles.getX() * degToRad);
-    sin_theta = std::sin(angles.getY() * degToRad);
-    sin_psi = std::sin(angles.getZ() * degToRad);
+    sin_phi = std::sin(angles.getx() * degToRad);
+    sin_theta = std::sin(angles.gety() * degToRad);
+    sin_psi = std::sin(angles.getz() * degToRad);
 
-    cos_phi = std::cos(angles.getX() * degToRad);
-    cos_theta = std::cos(angles.getY() * degToRad);
-    cos_psi = std::cos(angles.getZ() * degToRad);
+    cos_phi = std::cos(angles.getx() * degToRad);
+    cos_theta = std::cos(angles.gety() * degToRad);
+    cos_psi = std::cos(angles.getz() * degToRad);
   }
   else
   {
-    sin_phi = std::sin(angles.getX());
-    sin_theta = std::sin(angles.getY());
-    sin_psi = std::sin(angles.getZ());
+    sin_phi = std::sin(angles.getx());
+    sin_theta = std::sin(angles.gety());
+    sin_psi = std::sin(angles.getz());
 
-    cos_phi = std::cos(angles.getX());
-    cos_theta = std::cos(angles.getY());
-    cos_psi = std::cos(angles.getZ());
+    cos_phi = std::cos(angles.getx());
+    cos_theta = std::cos(angles.gety());
+    cos_psi = std::cos(angles.getz());
   }
 
   if (!ccw)
@@ -433,18 +433,18 @@ inline const Vector3d<T> Vector3d<T>::
   Vector3d temp = *this - origin;
   Vector3d result = temp;
 
-  result.setY(temp.getY() * cos_phi + temp.getZ() * sin_phi);
-  result.setZ(-temp.getY() * sin_phi + temp.getZ() * cos_phi);
+  result.sety(temp.gety() * cos_phi + temp.getz() * sin_phi);
+  result.setz(-temp.gety() * sin_phi + temp.getz() * cos_phi);
 
   temp = result;
 
-  result.setX(temp.getX() * cos_theta - temp.getZ() * sin_theta);
-  result.setZ(temp.getX() * sin_theta + temp.getZ() * cos_theta);
+  result.setx(temp.getx() * cos_theta - temp.getz() * sin_theta);
+  result.setz(temp.getx() * sin_theta + temp.getz() * cos_theta);
 
   temp = result;
 
-  result.setX(temp.getX() * cos_psi + temp.getY() * sin_psi);
-  result.setY(-temp.getX() * sin_psi + temp.getY() * cos_psi);
+  result.setx(temp.getx() * cos_psi + temp.gety() * sin_psi);
+  result.sety(-temp.getx() * sin_psi + temp.gety() * cos_psi);
 
   return result + origin;
 }
@@ -474,4 +474,4 @@ inline const Vector3d<T> Vector3d<T>::
   return *this * cos_theta + (axis % *this) * sin_theta + axis * ((axis * *this) * (1 - cos_theta));
 }
 
-#endif // RAYTRACER_VECTOR3D_H_
+#endif // RAyTRACER_VECTOR3D_H_
