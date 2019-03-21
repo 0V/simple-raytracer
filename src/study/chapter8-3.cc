@@ -67,7 +67,7 @@ int main()
   MaterialPtr metal = std::make_shared<Metal>(0.8 * OneAll);
   MaterialPtr metal2 = std::make_shared<Metal>(vec3(0.7, 0.7, 1));
   MaterialPtr metal3 = std::make_shared<Metal>(vec3(0.4, 1, 0.4));
-  MaterialPtr metal4 = std::make_shared<Metal>(0.8 * OneAll, 0.8);
+  MaterialPtr metal4 = std::make_shared<Metal>(0.8 * OneAll, 0.4);
 
   std::vector<HitablePtr> list;
   list.emplace_back(std::make_shared<Sphere>(vec3(0, 0, -1), 0.5, lambertian));
