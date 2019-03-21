@@ -474,4 +474,10 @@ inline const Vector3d<T> Vector3d<T>::
   return *this * cos_theta + (axis % *this) * sin_theta + axis * ((axis * *this) * (1 - cos_theta));
 }
 
+template <typename T>
+inline Vector3d<T> operator*(const T &scalar, const Vector3d<T> &v)
+{
+  return Vector3d(v.x * scalar, v.y * scalar, v.z * scalar);
+}
+
 #endif // RAyTRACER_VECTOR3D_H_

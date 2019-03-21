@@ -1,7 +1,7 @@
 #include <fstream>
 #include "simple_raytracer.h"
 
-void HelloImage()
+int main()
 {  std::ofstream image("image.ppm");
   int nx = 200;
   int ny = 100;

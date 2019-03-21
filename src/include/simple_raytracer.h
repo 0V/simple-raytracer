@@ -3,5 +3,6 @@
 
 #include "vector3d.h"
 #include "vector_utility.h"
+#include "ray.h"
 
 #endif // RAYTRACER_SIMPLE_RAYTRACER_H_
