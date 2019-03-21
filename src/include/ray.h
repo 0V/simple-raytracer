@@ -5,12 +5,12 @@ class Ray
 {
 public:
   Ray() {}
-  Ray(const vec3 &a, const vec3 &b) : va(a), vb(b)
+  Ray(const vec3 &from, const vec3 &dir) : va(from), vb(dir)
   {
   }
 
   vec3 origin() const { return va; }
-  vec3 direction() const { return vb - va; }
+  vec3 direction() const { return vb; }
   vec3 point_at_parameter(double t) const { return va + vb * t; }
 
   vec3 va;
