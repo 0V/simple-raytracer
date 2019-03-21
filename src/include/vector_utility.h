@@ -11,4 +11,9 @@ inline std::basic_ostream<Char> &operator<<(std::basic_ostream<Char> &os, const 
   return os << Char('(') << v.x << Char(',') << v.y << Char(',') << v.z << Char(')');
 }
 
+inline vec3 reflect(const vec3 &v_in, const vec3 &n)
+{
+  return v_in - (2 * (v_in * n)) * n;
+}
+
 #endif // RAYTRACER_VECTOR_UTILITY_H_

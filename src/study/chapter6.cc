@@ -4,8 +4,8 @@
 #include <fstream>
 #include "simple_raytracer.h"
 
-class IHitable;
-typedef std::shared_ptr<IHitable> IHitablePtr;
+class HitableBase;
+typedef std::shared_ptr<HitableBase> HitableBasePtr;
 
 const vec3 SphereCenter(0, 0, -1);
 const vec3 OneAll(1.0, 1.0, 1.0);
@@ -14,7 +14,7 @@ const vec3 ColorMax(0.5, 0.7, 1.0);
 const vec3 Yellow(1, 1, 0);
 const vec3 White(1, 1, 1);
 
-vec3 color(const Ray &r, IHitable &world)
+vec3 color(const Ray &r, HitableBase &world)
 {
   HitRecord record;
 

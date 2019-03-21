@@ -3,18 +3,20 @@
 
 #include <memory>
 #include "ray.h"
+#include "materials/material_base.h"
 
-class IHitable;
-using HitablePtr = std::shared_ptr<IHitable>;
+class HitableBase;
+using HitablePtr = std::shared_ptr<HitableBase>;
 
 struct HitRecord
 {
   double t;
   vec3 p;
   vec3 normal;
+  MaterialPtr mat_ptr;
 };
 
-class IHitable
+class HitableBase
 {
 public:
   virtual bool hit(const Ray &r, const double &t_min, const double &t_max, HitRecord &dist) const = 0;

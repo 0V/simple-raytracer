@@ -1,16 +1,24 @@
 #ifndef RAYTRACER_OBJECTS_SPHERE_H_
 #define RAYTRACER_OBJECTS_SPHERE_H_
 
-#include "hitable.h"
+#include<memory>
+#include "hitable_base.h"
+#include "materials/material_base.h"
 
-class Sphere : public IHitable
+
+class Sphere : public HitableBase
 {
 public:
   vec3 center;
   double radius;
+  std::shared_ptr<MaterialBase> mat_ptr;
 
   Sphere() {}
   Sphere(vec3 center_, double radius_) : center(center_), radius(radius_)
+  {
+  }
+
+  Sphere(vec3 center_, double radius_, std::shared_ptr<MaterialBase> &mat_ptr_) : center(center_), radius(radius_), mat_ptr(mat_ptr_)
   {
   }
 
@@ -32,6 +40,7 @@ public:
         dist.t = ans;
         dist.p = r.point_at_parameter(ans);
         dist.normal = (dist.p - center).getUnit();
+        dist.mat_ptr = mat_ptr;
         return true;
       }
 
@@ -41,6 +50,7 @@ public:
         dist.t = ans;
         dist.p = r.point_at_parameter(ans);
         dist.normal = (dist.p - center).getUnit();
+        dist.mat_ptr = mat_ptr;
         return true;
       }
     }

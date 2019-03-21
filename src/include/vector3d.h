@@ -96,6 +96,9 @@ public:
   //! Returns dot product
   const T dot(const Vector3d &other) const;
 
+  //! Returns product each value
+  const Vector3d<T> product(const Vector3d &other) const;
+
   //! Interpolates *this between another vector, by a ratio
   const Vector3d getInterpolation(const Vector3d &other, const T &ratio) const;
 
@@ -379,6 +382,12 @@ template <typename T>
 inline const T Vector3d<T>::dot(const Vector3d &other) const
 {
   return (*this) * other;
+}
+
+template <typename T>
+inline const Vector3d<T> Vector3d<T>::product(const Vector3d &other) const
+{
+  return Vector3d<T>((*this).x * other.x, (*this).y * other.y, (*this).z * other.z);
 }
 
 template <typename T>

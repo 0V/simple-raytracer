@@ -3,9 +3,11 @@
 
 #include <memory>
 #include <vector>
-#include "hitable.h"
+#include "hitable_base.h"
 
-class HitableList : public IHitable
+class MaterialBase;
+
+class HitableList : public HitableBase
 {
 public:
   std::vector<HitablePtr> list;
