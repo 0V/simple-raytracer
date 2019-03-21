@@ -1,3 +1,3 @@
 # simple-raytracer
 
-Learning Ray Tracing in One Weekend by Peter Shirley
+Learning ray Tracing in One Weekend by Peter Shirley
