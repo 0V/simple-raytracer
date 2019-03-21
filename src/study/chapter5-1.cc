@@ -7,8 +7,6 @@ const vec3 SphereCenter(0, 0, -1);
 const vec3 OneAll(1.0, 1.0, 1.0);
 const vec3 OneX(1.0, 0, 0);
 const vec3 ColorMax(0.5, 0.7, 1.0);
-const vec3 Yellow(1, 1, 0);
-const vec3 White(1, 1, 1);
 
 double hit_sphere(const vec3 &center, const double &radius, const Ray &r)
 {
@@ -36,8 +34,7 @@ vec3 color(const Ray &r)
   if (t > 0)
   {
     vec3 normal = (r.point_at_parameter(t) - SphereCenter).getUnit();
-    double d = -(normal * r.direction().getUnit());
-    return (1 - d) * Yellow + d * White;
+    return 0.5 * (normal + OneAll);
   }
   vec3 dir_unit = r.direction().getUnit();
   t = 0.5 * (dir_unit.y + 1.0);
