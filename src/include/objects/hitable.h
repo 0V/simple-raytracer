@@ -1,7 +1,11 @@
 #ifndef RAYTRACER_OBJECT_HITABLE_H_
 #define RAYTRACER_OBJECT_HITABLE_H_
 
+#include <memory>
 #include "ray.h"
+
+class IHitable;
+using HitablePtr = std::shared_ptr<IHitable>;
 
 struct HitRecord
 {

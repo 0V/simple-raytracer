@@ -15,7 +15,7 @@ public:
   }
 
   // HitRecord will be changed
-  bool hit(const Ray &r, const double &t_min, const double &t_max, HitRecord &dist) const
+  virtual bool hit(const Ray &r, const double &t_min, const double &t_max, HitRecord &dist) const
   {
     vec3 o_to_center = r.origin() - center;
     // ax^2 + 2bt + c

@@ -1,7 +1,11 @@
 #include <iostream>
+#include <random>
 #include <cmath>
 #include <fstream>
 #include "simple_raytracer.h"
+
+class IHitable;
+typedef std::shared_ptr<IHitable> IHitablePtr;
 
 const vec3 SphereCenter(0, 0, -1);
 const vec3 OneAll(1.0, 1.0, 1.0);
@@ -28,36 +32,42 @@ vec3 color(const Ray &r, IHitable &world)
 
 int main()
 {
+  constexpr int nx = 200;
+  constexpr int ny = 100;
+  constexpr int sampling_count = 100;
+
   // ** FILE ** //
   std::ofstream image("image.ppm");
-  int nx = 200;
-  int ny = 100;
   image << "P3"
         << "\n";
   image << nx << " " << ny << "\n";
   image << 255 << "\n";
   // ** FILE ** //
 
-  vec3 lower_left_corner(-2.0, -1.0, -1.0);
-  vec3 horizontal(4.0, 0, 0);
-  vec3 vertical(0, 2.0, 0);
-  vec3 origin(0, 0, 0);
+  std::vector<HitablePtr> list;
+  list.emplace_back(std::make_shared<Sphere>(SphereCenter, 0.5));
+  list.emplace_back(std::make_shared<Sphere>(vec3(0, -100.5, -1), 100));
+  HitableList hitables(list);
 
-  IHitable *tmp_hitables[2];
+  Camera camera;
 
-  tmp_hitables[0] = new Sphere(SphereCenter, 0.5);
-  tmp_hitables[1] = new Sphere(vec3(0, -100.5, -1), 100);
-
-  HitableList hitables(tmp_hitables, 2);
+  std::random_device seed_gen;
+  std::mt19937 engine(seed_gen());
+  std::uniform_real_distribution<double> dist(-1, 1);
 
   for (int j = ny - 1; j >= 0; j--)
   {
     for (int i = 0; i < nx; i++)
     {
-      double u = (double)i / nx;
-      double v = (double)j / ny;
-      Ray ray_to_p(origin, horizontal * u + vertical * v + lower_left_corner);
-      vec3 col = color(ray_to_p, hitables);
+      vec3 col(0, 0, 0);
+      for (int s = 0; s < sampling_count; s++)
+      {
+        double u = (double)(i + dist(engine)) / nx;
+        double v = (double)(j + dist(engine)) / ny;
+        col += color(camera.get_ray(u, v), hitables);
+      }
+
+      col /= (double)sampling_count;
       int ir = 255.99 * col[0];
       int ig = 255.99 * col[1];
       int ib = 255.99 * col[2];

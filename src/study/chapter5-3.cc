@@ -43,12 +43,13 @@ int main()
   vec3 vertical(0, 2.0, 0);
   vec3 origin(0, 0, 0);
 
-  IHitable *tmp_hitables[2];
+  std::vector<HitablePtr> list;
+  list.emplace_back(std::make_shared<Sphere>(SphereCenter, 0.5));
+  list.emplace_back(std::make_shared<Sphere>(vec3(0, -100.5, -1), 100));
+  HitableList hitables(list);
 
-  tmp_hitables[0] = new Sphere(SphereCenter, 0.5);
-  tmp_hitables[1] = new Sphere(vec3(0, -100.5, -1), 100);
 
-  HitableList hitables(tmp_hitables, 2);
+  HitableList hitables(list);
 
   for (int j = ny - 1; j >= 0; j--)
   {

@@ -1,16 +1,17 @@
 #ifndef RAYTRACER_OBJECTS_HITABLE_LIST_H_
 #define RAYTRACER_OBJECTS_HITABLE_LIST_H_
 
+#include <memory>
+#include <vector>
 #include "hitable.h"
 
 class HitableList : public IHitable
 {
 public:
-  IHitable **list;
-  int size;
+  std::vector<HitablePtr> list;
 
   HitableList() {}
-  HitableList(IHitable **l, int n) : list(l), size(n)
+  HitableList(const std::vector<HitablePtr> &l) : list(l)
   {
   }
 
@@ -19,9 +20,9 @@ public:
     HitRecord tmp_rec;
     bool any_hit = false;
     double t_closest = t_max;
-    for (int i = 0; i < size; i++)
+    for (auto &h : list)
     {
-      if (list[i]->hit(r, t_min, t_closest, tmp_rec))
+      if (h->hit(r, t_min, t_closest, tmp_rec))
       {
         any_hit = true;
         t_closest = tmp_rec.t;
