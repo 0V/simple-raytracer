@@ -18,6 +18,8 @@ std::random_device seed_gen;
 std::mt19937 engine(seed_gen());
 std::uniform_real_distribution<double> dist(-1, 1);
 
+constexpr double IgnoreLengthNearCamera = 0.00001;
+
 vec3 sample_point_in_unit_sphere()
 {
   vec3 p;
@@ -32,9 +34,10 @@ vec3 color(const Ray &r, IHitable &world)
 {
   HitRecord record;
 
-  if (world.hit(r, 0, INFINITY, record))
+  if (world.hit(r, IgnoreLengthNearCamera, INFINITY, record))
   {
-    vec3 target = record.p + record.normal + sample_point_in_unit_sphere();
+    vec3 target = record.normal + sample_point_in_unit_sphere();
+    //    std::cout << target << "\n";
     return 0.5 * color(Ray(record.p, target), world);
   }
   else
@@ -79,9 +82,9 @@ int main()
       }
 
       col /= (double)sampling_count;
-      int ir = 255.99 * col[0];
-      int ig = 255.99 * col[1];
-      int ib = 255.99 * col[2];
+      int ir = 255.99 * std::sqrt(col[0]);
+      int ig = 255.99 * std::sqrt(col[1]);
+      int ib = 255.99 * std::sqrt(col[2]);
       image << ir << " " << ig << " " << ib << "\n";
     }
   }
