@@ -16,4 +16,10 @@ inline vec3 reflect(const vec3 &v_in, const vec3 &n)
   return v_in - (2 * (v_in * n)) * n;
 }
 
+inline bool refract(const vec3 &v_in, const vec3 &n, float ni_over_nt, vec3& refracted)
+{
+
+  return v_in - (2 * (v_in * n)) * n;
+}
+
 #endif // RAYTRACER_VECTOR_UTILITY_H_

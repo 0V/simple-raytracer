@@ -7,9 +7,9 @@
 class PointSamplerSphere
 {
 private:
-  static std::random_device seed_gen_;
-  static std::mt19937 engine_;
-  static std::uniform_real_distribution<double> dist_;
+  mutable std::random_device seed_gen_ = std::random_device();
+  mutable std::mt19937 engine_ = std::mt19937(seed_gen_());
+  mutable std::uniform_real_distribution<double> dist_= std::uniform_real_distribution<double>(-1, 1);
 
 public:
   PointSamplerSphere() {}
@@ -27,9 +27,5 @@ public:
     return p;
   }
 };
-
-std::random_device PointSamplerSphere::seed_gen_ = std::random_device();
-std::mt19937 PointSamplerSphere::engine_ = std::mt19937(seed_gen_());
-std::uniform_real_distribution<double> PointSamplerSphere::dist_ = std::uniform_real_distribution<double>(-1, 1);
 
 #endif // RAYTRACER_POINT_SAMPLER_SPHERE_H_

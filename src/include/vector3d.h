@@ -88,7 +88,7 @@ public:
   const T getLen() const;
 
   //! Returns a vector with the same orientation, but with a length of 1
-  const Vector3d getUnit() const;
+  const Vector3d normalize() const;
 
   //! Returns cross product
   const Vector3d cross(const Vector3d &other) const;
@@ -364,7 +364,7 @@ inline const T Vector3d<T>::getLen() const
 }
 
 template <typename T>
-inline const Vector3d<T> Vector3d<T>::getUnit() const
+inline const Vector3d<T> Vector3d<T>::normalize() const
 {
   if (getSqrLen() != 0)
     return *this / getLen();

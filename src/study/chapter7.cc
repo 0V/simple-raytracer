@@ -40,7 +40,7 @@ vec3 color(const Ray &r, HitableBase &world)
   }
   else
   {
-    vec3 dir_unit = r.direction().getUnit();
+    vec3 dir_unit = r.direction().normalize();
     double t = 0.5 * (dir_unit.y + 1.0);
     return (1.0 - t) * OneAll + t * ColorMax;
   }
