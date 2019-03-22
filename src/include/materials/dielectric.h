@@ -4,7 +4,7 @@
 #include "vector_utility.h"
 #include "objects/hitable_base.h"
 
-class Dilectric : public MaterialBase
+class Dielectric : public MaterialBase
 {
 private:
   mutable std::random_device seed_gen_ = std::random_device();
@@ -16,7 +16,7 @@ public:
   double ref_idx;
   double inverse_ref_idx;
 
-  Dilectric(double ref_idx_) : ref_idx(ref_idx_), inverse_ref_idx(1.0 / ref_idx_) {}
+  Dielectric(double ref_idx_) : ref_idx(ref_idx_), inverse_ref_idx(1.0 / ref_idx_) {}
 
   virtual bool scatter(const Ray &r_in, const HitRecord &record, vec3 &attenuation, Ray &scattered) const
   {

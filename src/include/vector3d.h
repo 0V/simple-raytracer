@@ -83,7 +83,7 @@ public:
   // Auxiliary methods
 
   //! Returns the squared length of *this
-  const T getSqrLen() const;
+  const T square_length() const;
   //! Returns the length of *this
   const T length() const;
 
@@ -352,7 +352,7 @@ inline Vector3d<T> &Vector3d<T>::operator%=(const Vector3d &other)
 }
 
 template <typename T>
-inline const T Vector3d<T>::getSqrLen() const
+inline const T Vector3d<T>::square_length() const
 {
   return x * x + y * y + z * z;
 }
@@ -360,13 +360,13 @@ inline const T Vector3d<T>::getSqrLen() const
 template <typename T>
 inline const T Vector3d<T>::length() const
 {
-  return std::sqrt(getSqrLen());
+  return std::sqrt(square_length());
 }
 
 template <typename T>
 inline const Vector3d<T> Vector3d<T>::normalize() const
 {
-  if (getSqrLen() != 0)
+  if (square_length() != 0)
     return *this / length();
 
   return *this;

@@ -18,7 +18,7 @@ public:
   {
   }
 
-  Sphere(vec3 center_, double radius_, std::shared_ptr<MaterialBase> &mat_ptr_) : center(center_), radius(radius_), mat_ptr(mat_ptr_)
+  Sphere(vec3 center_, double radius_, std::shared_ptr<MaterialBase> mat_ptr_) : center(center_), radius(radius_), mat_ptr(mat_ptr_)
   {
   }
 

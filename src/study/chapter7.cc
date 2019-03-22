@@ -24,7 +24,7 @@ vec3 sample_point_in_unit_sphere()
   do
   {
     p = vec3(dist(seed_gen), dist(seed_gen), dist(seed_gen));
-  } while (p.getSqrLen() >= 1.0);
+  } while (p.square_length() >= 1.0);
   return p;
 }
 

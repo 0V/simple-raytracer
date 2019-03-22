@@ -7,7 +7,7 @@
 class Metal : public MaterialBase
 {
 private:
-  PointSamplerSphere sampler;
+  PointSamplerUnitSphere sampler;
 
 public:
   vec3 albedo;

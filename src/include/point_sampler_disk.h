@@ -1,10 +1,10 @@
-#ifndef RAYTRACER_POINT_SAMPLER_SPHERE_H_
-#define RAYTRACER_POINT_SAMPLER_SPHERE_H_
+#ifndef RAYTRACER_POINT_SAMPLER_DISK_H_
+#define RAYTRACER_POINT_SAMPLER_DISK_H_
 
 #include <random>
 #include "vector_utility.h"
 
-class PointSamplerSphere
+class PointSamplerDisk
 {
 private:
   mutable std::random_device seed_gen_ = std::random_device();
@@ -12,8 +12,8 @@ private:
   mutable std::uniform_real_distribution<double> dist_ = std::uniform_real_distribution<double>(-1, 1);
 
 public:
-  PointSamplerSphere() {}
-  PointSamplerSphere(const double &radius_) : radius(radius_), square_radius(radius_ * radius_) {}
+  PointSamplerDisk() {}
+  PointSamplerDisk(const double &radius_) : radius(radius_), square_radius(radius_ * radius_) {}
   const double radius = 1;
   const double square_radius = 1;
 
@@ -22,13 +22,13 @@ public:
     vec3 p;
     do
     {
-      p = vec3(radius * dist_(seed_gen_), radius * dist_(seed_gen_), radius * dist_(seed_gen_));
+      p = vec3(radius * dist_(seed_gen_), radius * dist_(seed_gen_), 0);
     } while (p.square_length() >= square_radius);
     return p;
   }
 };
 
-class PointSamplerUnitSphere
+class PointSamplerUnitDisk
 {
 private:
   mutable std::random_device seed_gen_ = std::random_device();
@@ -36,16 +36,17 @@ private:
   mutable std::uniform_real_distribution<double> dist_ = std::uniform_real_distribution<double>(-1, 1);
 
 public:
-  PointSamplerUnitSphere() {}
+  PointSamplerUnitDisk() {}
+
   vec3 sample() const
   {
     vec3 p;
     do
     {
-      p = vec3(dist_(seed_gen_), dist_(seed_gen_), dist_(seed_gen_));
+      p = vec3(dist_(seed_gen_), dist_(seed_gen_), 0);
     } while (p.square_length() >= 1);
     return p;
   }
 };
 
-#endif // RAYTRACER_POINT_SAMPLER_SPHERE_H_
+#endif // RAYTRACER_POINT_SAMPLER_DISK_H_
