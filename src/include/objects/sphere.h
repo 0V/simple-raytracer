@@ -39,7 +39,7 @@ public:
       {
         dist.t = ans;
         dist.p = r.point_at_parameter(ans);
-        dist.normal = (dist.p - center).normalize();
+        dist.normal = (dist.p - center) / radius;
         dist.mat_ptr = mat_ptr;
         return true;
       }
@@ -49,7 +49,7 @@ public:
       {
         dist.t = ans;
         dist.p = r.point_at_parameter(ans);
-        dist.normal = (dist.p - center).normalize();
+        dist.normal = (dist.p - center) / radius;
         dist.mat_ptr = mat_ptr;
         return true;
       }

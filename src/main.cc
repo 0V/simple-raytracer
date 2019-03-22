@@ -48,8 +48,8 @@ vec3 color(const Ray &r, HitableBase &world, int depth)
 
 int main()
 {
-  constexpr int nx = 800;
-  constexpr int ny = 400;
+  constexpr int nx = 200;
+  constexpr int ny = 100;
   constexpr int sampling_count = 100;
 
   // ** FILE ** //
@@ -69,13 +69,15 @@ int main()
   MaterialPtr metal3 = std::make_shared<Metal>(vec3(0.4, 1, 0.4));
   MaterialPtr metal4 = std::make_shared<Metal>(0.8 * OneAll, 0.8);
 
-  MaterialPtr dilectric = std::make_shared<Dilectric>(0.8);
+  MaterialPtr dilectric = std::make_shared<Dilectric>(1.5);
 
   std::vector<HitablePtr> list;
   list.emplace_back(std::make_shared<Sphere>(vec3(0, 0, -1), 0.5, lambertian));
-  list.emplace_back(std::make_shared<Sphere>(vec3(1, 0, -1), 0.3, dilectric));
-  list.emplace_back(std::make_shared<Sphere>(vec3(-1, 0, -1), 0.3, metal4));
+  list.emplace_back(std::make_shared<Sphere>(vec3(1, 0, -1), 0.3, metal4));
   list.emplace_back(std::make_shared<Sphere>(vec3(0, -100.5, -1), 100, lambertian3));
+  list.emplace_back(std::make_shared<Sphere>(vec3(-1, 0, -1), 0.5, dilectric));
+  list.emplace_back(std::make_shared<Sphere>(vec3(-1, 0, -1), -0.45, dilectric));
+
   HitableList hitables(list);
 
   Camera camera;

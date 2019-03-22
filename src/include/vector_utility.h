@@ -16,21 +16,37 @@ inline vec3 reflect(const vec3 &v_in, const vec3 &n)
   return v_in - (2 * (v_in * n)) * n;
 }
 
-inline bool refract(const vec3 &v_in, const vec3 &n, const float &ni_over_nt, vec3 &refracted)
+inline bool refract(const vec3 &v_in, const vec3 &n, const double &ni_over_nt, vec3 &refracted)
 {
   vec3 v_in_unit = v_in.normalize();
   double vn = v_in_unit * n;
   double sin_in_pow = 1 - vn * vn;
-  double discriminat = 1 - ni_over_nt * ni_over_nt * sin_in_pow;
-  if (discriminat > 0)
+  double discriminant = 1 - ni_over_nt * ni_over_nt * sin_in_pow;
+  if (discriminant > 0)
   {
-    refracted = (v_in_unit - (n * v_in_unit) * n) - n * std::sqrt(discriminat);
+    refracted = (ni_over_nt * (v_in_unit - vn * n)) - n * std::sqrt(discriminant);
     return true;
   }
   else
   {
     return false;
   }
+}
+
+// Schlick's approximation of Fresnel factor
+inline double schlick_fresnel(const double &cosine, const double &ref_idx)
+{
+  double r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
+  r0 = r0 * r0;
+  return r0 + (1.0 - r0) * std::pow((1.0 - cosine), 5);
+}
+
+// Schlick's approximation of Fresnel factor
+inline double schlick_fresnel(const double &cosine, const double &ref_idx_in, const double &ref_idx_out)
+{
+  double r0 = (ref_idx_in - ref_idx_out) / (ref_idx_in + ref_idx_out);
+  r0 *= r0;
+  return r0 + (ref_idx_in - r0) * std::pow((1 - cosine), 5);
 }
 
 #endif // RAYTRACER_VECTOR_UTILITY_H_

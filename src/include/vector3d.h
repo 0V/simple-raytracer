@@ -85,7 +85,7 @@ public:
   //! Returns the squared length of *this
   const T getSqrLen() const;
   //! Returns the length of *this
-  const T getLen() const;
+  const T length() const;
 
   //! Returns a vector with the same orientation, but with a length of 1
   const Vector3d normalize() const;
@@ -358,7 +358,7 @@ inline const T Vector3d<T>::getSqrLen() const
 }
 
 template <typename T>
-inline const T Vector3d<T>::getLen() const
+inline const T Vector3d<T>::length() const
 {
   return std::sqrt(getSqrLen());
 }
@@ -367,7 +367,7 @@ template <typename T>
 inline const Vector3d<T> Vector3d<T>::normalize() const
 {
   if (getSqrLen() != 0)
-    return *this / getLen();
+    return *this / length();
 
   return *this;
 }
