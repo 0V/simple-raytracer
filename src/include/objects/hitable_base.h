@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "ray.h"
+#include "aabb.h"
 #include "materials/material_base.h"
 
 class HitableBase;
@@ -20,6 +21,7 @@ class HitableBase
 {
 public:
   virtual bool hit(const Ray &r, const double &t_min, const double &t_max, HitRecord &dist) const = 0;
+  virtual bool bounding_box(const double &t0, const double &t1, AABB &box) const = 0;
 };
 
 #endif // RAYTRACER_OBJECT_HITABLE_H_

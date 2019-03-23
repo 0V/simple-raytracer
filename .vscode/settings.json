@@ -35,6 +35,7 @@
     "utility": "cpp",
     "memory": "cpp",
     "numeric": "cpp",
-    "random": "cpp"
+    "random": "cpp",
+    "deque": "cpp"
   }
 }

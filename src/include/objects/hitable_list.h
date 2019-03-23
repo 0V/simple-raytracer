@@ -17,7 +17,7 @@ public:
   {
   }
 
-  bool hit(const Ray &r, const double &t_min, const double &t_max, HitRecord &dist) const
+  virtual bool hit(const Ray &r, const double &t_min, const double &t_max, HitRecord &dist) const
   {
     HitRecord tmp_rec;
     bool any_hit = false;
@@ -32,6 +32,39 @@ public:
       }
     }
     return any_hit;
+  }
+
+  virtual bool bounding_box(const double &t0, const double &t1, AABB &box) const
+  {
+    const int size = list.size();
+    if (size < 1)
+    {
+      return false;
+    }
+
+    AABB tmp_box;
+    if (list[0]->bounding_box(t0, t1, tmp_box))
+    {
+      box = tmp_box;
+    }
+    else
+    {
+      return false;
+    };
+
+    for (int i = 0; i < size; i++)
+    {
+      if (list[0]->bounding_box(t0, t1, tmp_box))
+      {
+        box = surrounding_box(box, tmp_box);
+      }
+      else
+      {
+        return false;
+      }
+    }
+
+    return true;
   }
 };
 

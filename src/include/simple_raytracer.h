@@ -5,8 +5,9 @@
 #include "vector_utility.h"
 #include "ray.h"
 #include "camera.h"
-#include "dof_camera.h"
+#include "raw_camera.h"
 #include "objects/objects.h"
 #include "materials/materials.h"
+#include "textures/textures.h"
 
 #endif // RAYTRACER_SIMPLE_RAYTRACER_H_

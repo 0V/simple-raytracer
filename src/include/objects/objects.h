@@ -4,5 +4,6 @@
 #include "hitable_base.h"
 #include "hitable_list.h"
 #include "sphere.h"
+#include "moving_sphere.h"
 
 #endif // RAYTRACER_OBJECTS_OBJECTS_H_

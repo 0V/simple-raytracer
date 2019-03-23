@@ -2,6 +2,7 @@
 #define RAYTRACER_MATERIALS_LAMBERTIAN_H_
 
 #include "objects/hitable_base.h"
+#include "textures/constant_texture.h"
 #include "point_sampler_sphere.h"
 
 class Lambertian : public MaterialBase
@@ -10,15 +11,15 @@ private:
   PointSamplerUnitSphere sampler;
 
 public:
-  vec3 albedo;
+  TexturePtr albedo;
 
   Lambertian() {}
-  Lambertian(vec3 albedo_) : albedo(albedo_) {}
+  Lambertian(const TexturePtr &albedo_) : albedo(albedo_) {}
   virtual bool scatter(const Ray &r_in, const HitRecord &record, vec3 &attenuation, Ray &scattered) const
   {
     vec3 target = record.normal + sampler.sample();
-    scattered = Ray(record.p, target);
-    attenuation = albedo;
+    scattered = Ray(record.p, target, r_in.time());
+    attenuation = albedo->value(0, 0, record.p);
     return true;
   }
 };
