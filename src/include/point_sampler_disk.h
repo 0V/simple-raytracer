@@ -3,13 +3,13 @@
 
 #include <random>
 #include "vector_utility.h"
+#include "value_sampler.h"
+
 
 class PointSamplerDisk
 {
 private:
-  mutable std::random_device seed_gen_ = std::random_device();
-  mutable std::mt19937 engine_ = std::mt19937(seed_gen_());
-  mutable std::uniform_real_distribution<double> dist_ = std::uniform_real_distribution<double>(-1, 1);
+  ValueSampler<double> sampler_ = ValueSampler<double>(-1, 1);
 
 public:
   PointSamplerDisk() {}
@@ -22,7 +22,7 @@ public:
     vec3 p;
     do
     {
-      p = vec3(radius * dist_(seed_gen_), radius * dist_(seed_gen_), 0);
+      p = vec3(radius * sampler_.sample(), radius * sampler_.sample(), 0);
     } while (p.square_length() >= square_radius);
     return p;
   }
@@ -31,10 +31,8 @@ public:
 class PointSamplerUnitDisk
 {
 private:
-  mutable std::random_device seed_gen_ = std::random_device();
-  mutable std::mt19937 engine_ = std::mt19937(seed_gen_());
-  mutable std::uniform_real_distribution<double> dist_ = std::uniform_real_distribution<double>(-1, 1);
-
+  ValueSampler<double> sampler_ = ValueSampler<double>(-1, 1);
+  
 public:
   PointSamplerUnitDisk() {}
 
@@ -43,7 +41,7 @@ public:
     vec3 p;
     do
     {
-      p = vec3(dist_(seed_gen_), dist_(seed_gen_), 0);
+      p = vec3(sampler_.sample(), sampler_.sample(), 0);
     } while (p.square_length() >= 1);
     return p;
   }

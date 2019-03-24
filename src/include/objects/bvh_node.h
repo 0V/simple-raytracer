@@ -4,36 +4,39 @@
 #include <random>
 #include <vector>
 #include <algorithm>
+#include "value_sampler.h"
 #include "hitable_base.h"
 #include "aabb.h"
+
+template <int N>
+struct greater_aabb
+{
+  bool operator()(HitablePtr &a, HitablePtr &b) const
+  {
+    AABB box_left, box_right;
+    if (a->bounding_box(0, 0, box_left) || !b->bounding_box(0, 0, box_right))
+    {
+      std::cerr << "no bounding box in bvh_node constructer\n";
+    }
+    else if (box_left.min()[N] - box_right.min()[N] < 0)
+    {
+      return -1;
+    }
+    else
+    {
+      return 1;
+    }
+  }
+};
 
 class BvhNode : public HitableBase
 {
 private:
+  ValueSampler<int> sampler_ = ValueSampler<int>(0, 2);
+
   mutable std::random_device seed_gen_ = std::random_device();
   mutable std::mt19937 engine_ = std::mt19937(seed_gen_());
   mutable std::uniform_int_distribution<int> dist_ = std::uniform_int_distribution<int>(0, 2);
-
-  template <int N>
-  struct greater_aabb
-  {
-    bool operator()(HitablePtr &a, HitablePtr &b) const
-    {
-      AABB box_left, box_right;
-      if (a->bounding_box(0, 0, box_left) || !b->bounding_box(0, 0, box_right))
-      {
-        std::cerr << "no bounding box in bvh_node constructer\n";
-      }
-      else if (box_left.min()[N] - box_right.min()[N] < 0)
-      {
-        return -1;
-      }
-      else
-      {
-        return 1;
-      }
-    }
-  };
 
   using greater_aabb_x = greater_aabb<0>;
   using greater_aabb_y = greater_aabb<1>;
@@ -47,7 +50,7 @@ public:
   BvhNode() {}
   BvhNode(const std::vector<HitablePtr> &l, const int &start, const int &n, const double &time0, const double &time1)
   {
-    int axis = dist_(engine_);
+    int axis = sampler_.sample();
 
     switch (axis)
     {
@@ -110,7 +113,7 @@ public:
         return false;
       }
 
-      return true;      
+      return true;
     }
     else
     {

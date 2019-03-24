@@ -49,4 +49,15 @@ inline double schlick_fresnel(const double &cosine, const double &ref_idx_in, co
   return r0 + (ref_idx_in - r0) * std::pow((1 - cosine), 5);
 }
 
+struct Vectors
+{
+  static const vec3 Zero;
+  static const vec3 One;
+  static const vec3 Up;
+};
+
+const vec3 Vectors::Zero = vec3(0, 0, 0);
+const vec3 Vectors::One = vec3(1, 1, 1);
+const vec3 Vectors::Up = vec3(0, 1, 0);
+
 #endif // RAYTRACER_VECTOR_UTILITY_H_

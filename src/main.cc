@@ -51,9 +51,10 @@ vec3 color(const Ray &r, HitableBase &world, int depth)
 std::vector<HitablePtr> random_scene()
 {
   std::vector<HitablePtr> list;
-  TexturePtr even = std::make_shared<ConstantTexture>(OneAll * 0.1);
-  TexturePtr odd = std::make_shared<ConstantTexture>(OneAll * 0.8);
-  TexturePtr lambert_tex = std::make_shared<CheckerTexture>(even, odd);
+  // TexturePtr even = std::make_shared<ConstantTexture>(OneAll * 0.1);
+  // TexturePtr odd = std::make_shared<ConstantTexture>(OneAll * 0.8);
+  // TexturePtr lambert_tex = std::make_shared<CheckerTexture>(even, odd);
+  TexturePtr lambert_tex = std::make_shared<PerlinNoiseTexture>(10);
   list.emplace_back(std::make_shared<Sphere>(vec3(0, -1000, 0), 1000, std::make_shared<Lambertian>(lambert_tex)));
 
   for (int a = -6; a < 6; a++)

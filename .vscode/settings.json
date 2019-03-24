@@ -36,6 +36,7 @@
     "memory": "cpp",
     "numeric": "cpp",
     "random": "cpp",
-    "deque": "cpp"
+    "deque": "cpp",
+    "algorithm": "cpp"
   }
 }

@@ -3,13 +3,12 @@
 
 #include <random>
 #include "vector_utility.h"
+#include "value_sampler.h"
 
 class PointSamplerSphere
 {
 private:
-  mutable std::random_device seed_gen_ = std::random_device();
-  mutable std::mt19937 engine_ = std::mt19937(seed_gen_());
-  mutable std::uniform_real_distribution<double> dist_ = std::uniform_real_distribution<double>(-1, 1);
+  ValueSampler<double> sampler_ = ValueSampler<double>(-1, 1);
 
 public:
   PointSamplerSphere() {}
@@ -22,7 +21,7 @@ public:
     vec3 p;
     do
     {
-      p = vec3(radius * dist_(seed_gen_), radius * dist_(seed_gen_), radius * dist_(seed_gen_));
+      p = vec3(radius * sampler_.sample(), radius * sampler_.sample(), radius * sampler_.sample());
     } while (p.square_length() >= square_radius);
     return p;
   }
@@ -31,9 +30,7 @@ public:
 class PointSamplerUnitSphere
 {
 private:
-  mutable std::random_device seed_gen_ = std::random_device();
-  mutable std::mt19937 engine_ = std::mt19937(seed_gen_());
-  mutable std::uniform_real_distribution<double> dist_ = std::uniform_real_distribution<double>(-1, 1);
+  ValueSampler<double> sampler_ = ValueSampler<double>(-1, 1);
 
 public:
   PointSamplerUnitSphere() {}
@@ -42,7 +39,7 @@ public:
     vec3 p;
     do
     {
-      p = vec3(dist_(seed_gen_), dist_(seed_gen_), dist_(seed_gen_));
+      p = vec3(sampler_.sample(), sampler_.sample(), sampler_.sample());
     } while (p.square_length() >= 1);
     return p;
   }
