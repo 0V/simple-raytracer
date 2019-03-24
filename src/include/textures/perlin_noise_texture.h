@@ -17,7 +17,7 @@ public:
 
   virtual vec3 value(const double &u, const double &v, const vec3 &p) const
   {
-    return Vectors::One * noise_.at(scale * p);
+    return noise_.at(scale * p) * Vectors::One;
   }
 };
 #endif // RAYTRACER_TEXTURES_PERLIN_NOISE_TESTURE_H_

@@ -103,7 +103,7 @@ std::vector<HitablePtr> random_scene()
 std::vector<HitablePtr> two_perlin_sphere()
 {
   std::vector<HitablePtr> list;
-  TexturePtr lambert_tex = std::make_shared<PerlinNoiseTexture>(1);
+  TexturePtr lambert_tex = std::make_shared<PerlinNoiseTexture>(5);
   list.emplace_back(std::make_shared<Sphere>(vec3(0, -1000, 0), 1000, std::make_shared<Lambertian>(lambert_tex)));
   list.emplace_back(std::make_shared<Sphere>(vec3(0, 2, 0), 2, std::make_shared<Lambertian>(lambert_tex)));
   return list;
