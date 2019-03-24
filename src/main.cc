@@ -103,11 +103,23 @@ std::vector<HitablePtr> random_scene()
 std::vector<HitablePtr> two_perlin_sphere()
 {
   std::vector<HitablePtr> list;
-  TexturePtr lambert_tex = std::make_shared<PerlinNoiseTexture>(5);
+  TexturePtr lambert_tex = std::make_shared<PerlinNoiseTurbTexture>(1);
   list.emplace_back(std::make_shared<Sphere>(vec3(0, -1000, 0), 1000, std::make_shared<Lambertian>(lambert_tex)));
   list.emplace_back(std::make_shared<Sphere>(vec3(0, 2, 0), 2, std::make_shared<Lambertian>(lambert_tex)));
   return list;
 }
+
+// std::vector<HitablePtr> two_image_sphere()
+// {
+//   int nx, ny, nn;
+//   std::vector<HitablePtr> list;
+//   unsigned char *tex_data = stbi_load("earth.jpg", &nx, &ny, &nn, 0);
+//   TexturePtr lambert_tex = std::make_shared<ImageTexture>(tex_data, nx, ny);
+//   list.emplace_back(std::make_shared<Sphere>(vec3(0, -1000, 0), 1000, std::make_shared<Lambertian>(lambert_tex)));
+//   list.emplace_back(std::make_shared<Sphere>(vec3(0, 2, 0), 2, std::make_shared<Lambertian>(lambert_tex)));
+//   return list;
+// }
+
 int main()
 {
   constexpr int nx = 1280;
@@ -139,6 +151,7 @@ int main()
 
   // std::vector<HitablePtr> list = random_scene();
   std::vector<HitablePtr> list = two_perlin_sphere();
+  // std::vector<HitablePtr> list = two_image_sphere();
 
   /*  list.emplace_back(std::make_shared<Sphere>(vec3(0, 0, -1), 0.5, lambertian));
   list.emplace_back(std::make_shared<Sphere>(vec3(1, 0, -1), 0.3, metal4));

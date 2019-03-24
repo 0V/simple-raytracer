@@ -58,6 +58,14 @@ public:
     box = AABB(center - vec3(radius, radius, radius), center + vec3(radius, radius, radius));
     return true;
   }
+
+  void get_sphere_uv(const vec3 &p, double &u_dist, double &v_dist) const
+  {
+    double phi = std::atan2(p.y, p.x);
+    double theta = std::acos(p.y);
+    u_dist = 0.5 - phi / M_PI;
+    v_dist = theta / M_PI + - 0.5;
+  }
 };
 
 #endif // RAYTRACER_OBJECTS_SPHERE_H_

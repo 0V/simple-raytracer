@@ -24,6 +24,7 @@ inline double trilinear_interp(const double c[2][2][2], const double &u, const d
   }
   return accum;
 }
+
 inline double perlin_interp(const vec3 c[2][2][2], const std::array<double, 3> &cood)
 {
   std::array<double, 3> cc;
@@ -144,6 +145,21 @@ public:
     return perlin_interp(c, cood);
     //    return perlin_interp(c, cood[0], cood[1], cood[2]);
   }
+
+  double at_turb(const vec3 &p, const int &depth = 7) const
+  {
+    double accum = 0;
+    vec3 temp_p = p;
+    double weight = 1;
+    for (int i = 0; i < depth; i++)
+    {
+      accum += weight * at(temp_p);
+      weight *= 0.5;
+      temp_p *= 2;
+    }
+    return std::fabs(accum);
+  }
+
 };
 
 #endif // RAYTRACER_TEXTURES_PERLIN_NOISE_H_
