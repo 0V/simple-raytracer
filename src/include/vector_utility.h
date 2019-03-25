@@ -54,10 +54,20 @@ struct Vectors
   static const vec3 Zero;
   static const vec3 One;
   static const vec3 Up;
+  static const vec3 Right;
+  static const vec3 Back;
+  static const vec3 X;
+  static const vec3 Y;
+  static const vec3 Z;
 };
 
 const vec3 Vectors::Zero = vec3(0, 0, 0);
 const vec3 Vectors::One = vec3(1, 1, 1);
 const vec3 Vectors::Up = vec3(0, 1, 0);
+const vec3 Vectors::Right = vec3(1, 0, 0);
+const vec3 Vectors::Back = vec3(0, 0, 1);
+const vec3 Vectors::X = vec3(1, 0, 0);
+const vec3 Vectors::Y = vec3(0, 1, 0);
+const vec3 Vectors::Z = vec3(0, 0, 1);
 
 #endif // RAYTRACER_VECTOR_UTILITY_H_

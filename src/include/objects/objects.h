@@ -5,5 +5,7 @@
 #include "hitable_list.h"
 #include "sphere.h"
 #include "moving_sphere.h"
+#include "rectangle.h"
+#include "flip_normals.h"
 
 #endif // RAYTRACER_OBJECTS_OBJECTS_H_

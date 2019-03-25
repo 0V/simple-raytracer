@@ -11,7 +11,9 @@ using HitablePtr = std::shared_ptr<HitableBase>;
 
 struct HitRecord
 {
-  double t;
+  float t;
+  float u;
+  float v;
   vec3 p;
   vec3 normal;
   MaterialPtr mat_ptr;

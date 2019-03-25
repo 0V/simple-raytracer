@@ -30,21 +30,22 @@ vec3 color(const Ray &r, HitableBase &world, int depth)
 
     Ray scattered;
     vec3 aten;
+    vec3 emitted = record.mat_ptr->emitted(record.u, record.v, record.p);
     if (depth < 50 && record.mat_ptr->scatter(r, record, aten, scattered))
     {
-      return aten.product(color(scattered, world, (depth + 1)));
+      return emitted + aten.product(color(scattered, world, (depth + 1)));
     }
     else
     {
-      return Black;
+      return emitted;
     }
-    //    std::cout << target << "\n";
   }
   else
   {
-    vec3 dir_unit = r.direction().normalize();
-    double t = 0.5 * (dir_unit.y + 1.0);
-    return (1.0 - t) * OneAll + t * ColorMax;
+    return Vectors::Zero;
+    // vec3 dir_unit = r.direction().normalize();
+    // double t = 0.5 * (dir_unit.y + 1.0);
+    // return (1.0 - t) * OneAll + t * ColorMax;
   }
 }
 
@@ -109,6 +110,41 @@ std::vector<HitablePtr> two_perlin_sphere()
   return list;
 }
 
+std::vector<HitablePtr> two_perlin_sphere_light()
+{
+  std::vector<HitablePtr> list;
+  TexturePtr lambert_tex = std::make_shared<PerlinNoiseTurbTexture>(1);
+
+  TexturePtr const_tex = std::make_shared<ConstantTexture>(vec3(4, 4, 4));
+  MaterialPtr light_mat = std::make_shared<DiffuseLight>(const_tex);
+
+  list.emplace_back(std::make_shared<Sphere>(vec3(0, -1000, 0), 1000, std::make_shared<Lambertian>(lambert_tex)));
+  list.emplace_back(std::make_shared<Sphere>(vec3(0, 2, 0), 2, std::make_shared<Lambertian>(lambert_tex)));
+  //  list.emplace_back(std::make_shared<Sphere>(vec3(0, 7, 0), 2, light_mat));
+  //  list.emplace_back(std::make_shared<RectangleXY>(3, 5, 1, 3, -2, light_mat));
+  list.emplace_back(std::make_shared<RectangleYZ>(-1, 1, -1, 1, -2, light_mat));
+  // list.emplace_back(std::make_shared<RectangleZX>(3, 5, 1, 3, -2, light_mat));
+  return list;
+}
+
+std::vector<HitablePtr> cornell_box()
+{
+  std::vector<HitablePtr> list;
+  TexturePtr lambert_tex = std::make_shared<PerlinNoiseTurbTexture>(1);
+
+  MaterialPtr red_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.65, 0.05, 0.05)));
+  MaterialPtr white_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.73, 0.73, 0.73)));
+  MaterialPtr green_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.12, 0.45, 0.15)));
+  MaterialPtr light_mat = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vectors::One * 15));
+
+  list.emplace_back(std::make_shared<RectangleYZ>(0, 555, 0, 555, 555, green_mat));
+  list.emplace_back(std::make_shared<RectangleYZ>(0, 555, 0, 555, 0, red_mat));
+  list.emplace_back(std::make_shared<RectangleXZ>(213, 343, 227, 332, 554, light_mat));
+  list.emplace_back(std::make_shared<RectangleXZ>(0, 555, 0, 555, 0, white_mat));
+  list.emplace_back(std::make_shared<RectangleXY>(0, 555, 0, 555, 555, white_mat));
+  return list;
+}
+
 // std::vector<HitablePtr> two_image_sphere()
 // {
 //   int nx, ny, nn;
@@ -128,7 +164,7 @@ int main()
   // constexpr int ny = 360;
   // constexpr int nx = 160;
   // constexpr int ny = 90;
-  constexpr int sampling_count = 10;
+  constexpr int sampling_count = 100;
 
   // ** FILE ** //
   std::ofstream image("image.ppm");
@@ -150,7 +186,9 @@ int main()
   // MaterialPtr dilectric = std::make_shared<Dielectric>(1.5);
 
   // std::vector<HitablePtr> list = random_scene();
-  std::vector<HitablePtr> list = two_perlin_sphere();
+  //  std::vector<HitablePtr> list = two_perlin_sphere();
+  // std::vector<HitablePtr> list = two_perlin_sphere_light();
+  std::vector<HitablePtr> list = cornell_box();
   // std::vector<HitablePtr> list = two_image_sphere();
 
   /*  list.emplace_back(std::make_shared<Sphere>(vec3(0, 0, -1), 0.5, lambertian));
@@ -162,14 +200,17 @@ int main()
 
   //  vec3 lookfrom(-1, 1, 2);
   //  vec3 lookat(0, 0, -1);
-  vec3 lookfrom(13, 2, 3);
-  vec3 lookat(0, 0, 0);
+  // vec3 lookfrom(23, 23, 3);
+  // vec3 lookat(0, 0, 0);
+  vec3 lookfrom(278, 278, -800);
+  vec3 lookat(278, 278, 0);
+  double vfov = 40.0;
   double dist_to_focus = 10.0;
-  double aperture = 0.1;
+  double aperture = 0;
   //  CameraPtr camera = std::make_shared<RaeCamera>(120, 2);
   // CameraPtr camera = std::make_shared<RaeCamera>(lookfrom, lookat, vec3(0, 1, 0), 90, (double)nx / ny);
 
-  CameraPtr camera = std::make_shared<Camera>(lookfrom, lookat, vec3(0, 1, 0), 20, double(nx) / double(ny), aperture, dist_to_focus, 0, 1);
+  CameraPtr camera = std::make_shared<Camera>(lookfrom, lookat, vec3(0, 1, 0), vfov, double(nx) / double(ny), aperture, dist_to_focus, 0, 1);
   //  camera cam(lookfrom, lookat, vec3(0, 1, 0), 20, double(nx) / double(ny), aperture, dist_to_focus);
 
   for (int j = ny - 1; j >= 0; j--)

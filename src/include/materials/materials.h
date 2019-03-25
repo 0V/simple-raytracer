@@ -5,5 +5,6 @@
 #include "lambertian.h"
 #include "metal.h"
 #include "dielectric.h"
+#include "diffuse_light.h"
 
 #endif // RAYTRACER_MATERIALS_MATERIALS_H_
