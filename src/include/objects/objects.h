@@ -7,5 +7,7 @@
 #include "moving_sphere.h"
 #include "rectangle.h"
 #include "flip_normals.h"
+#include "box.h"
+#include "transform.h"
 
 #endif // RAYTRACER_OBJECTS_OBJECTS_H_

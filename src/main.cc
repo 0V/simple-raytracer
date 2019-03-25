@@ -20,6 +20,8 @@ std::uniform_real_distribution<double> dist(-1, 1);
 std::uniform_real_distribution<double> dist_01(0, 1);
 
 constexpr double IgnoreLengthNearCamera = 0.00001;
+constexpr int DepthCount = 20;
+//constexpr int DepthCount = 50;
 
 vec3 color(const Ray &r, HitableBase &world, int depth)
 {
@@ -31,7 +33,7 @@ vec3 color(const Ray &r, HitableBase &world, int depth)
     Ray scattered;
     vec3 aten;
     vec3 emitted = record.mat_ptr->emitted(record.u, record.v, record.p);
-    if (depth < 50 && record.mat_ptr->scatter(r, record, aten, scattered))
+    if (depth < DepthCount && record.mat_ptr->scatter(r, record, aten, scattered))
     {
       return emitted + aten.product(color(scattered, world, (depth + 1)));
     }
@@ -130,18 +132,24 @@ std::vector<HitablePtr> two_perlin_sphere_light()
 std::vector<HitablePtr> cornell_box()
 {
   std::vector<HitablePtr> list;
-  TexturePtr lambert_tex = std::make_shared<PerlinNoiseTurbTexture>(1);
 
   MaterialPtr red_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.65, 0.05, 0.05)));
   MaterialPtr white_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.73, 0.73, 0.73)));
   MaterialPtr green_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.12, 0.45, 0.15)));
   MaterialPtr light_mat = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vectors::One * 15));
 
-  list.emplace_back(std::make_shared<RectangleYZ>(0, 555, 0, 555, 555, green_mat));
+  list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleYZ>(0, 555, 0, 555, 555, green_mat)));
   list.emplace_back(std::make_shared<RectangleYZ>(0, 555, 0, 555, 0, red_mat));
   list.emplace_back(std::make_shared<RectangleXZ>(213, 343, 227, 332, 554, light_mat));
+  list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXZ>(0, 555, 0, 555, 555, white_mat)));
   list.emplace_back(std::make_shared<RectangleXZ>(0, 555, 0, 555, 0, white_mat));
-  list.emplace_back(std::make_shared<RectangleXY>(0, 555, 0, 555, 555, white_mat));
+  list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXY>(0, 555, 0, 555, 555, white_mat)));
+
+  list.emplace_back(std::make_shared<Box>(vec3(130, 0, 65), vec3(295, 165, 230), green_mat));
+
+  auto redbox = std::make_shared<Box>(vec3(265, 0, 295), vec3(430, 330, 460), red_mat);
+  list.emplace_back(Transform::Translate::create(redbox, vec3(100, 0, 0)));
+
   return list;
 }
 
@@ -158,13 +166,15 @@ std::vector<HitablePtr> cornell_box()
 
 int main()
 {
-  constexpr int nx = 1280;
-  constexpr int ny = 720;
+  constexpr int nx = 820;
+  constexpr int ny = 820;
+  // constexpr int nx = 1280;
+  // constexpr int ny = 720;
   // constexpr int nx = 640;
   // constexpr int ny = 360;
   // constexpr int nx = 160;
   // constexpr int ny = 90;
-  constexpr int sampling_count = 100;
+  constexpr int sampling_count = 10;
 
   // ** FILE ** //
   std::ofstream image("image.ppm");
