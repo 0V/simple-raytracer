@@ -145,10 +145,12 @@ std::vector<HitablePtr> cornell_box()
   list.emplace_back(std::make_shared<RectangleXZ>(0, 555, 0, 555, 0, white_mat));
   list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXY>(0, 555, 0, 555, 555, white_mat)));
 
-  list.emplace_back(std::make_shared<Box>(vec3(130, 0, 65), vec3(295, 165, 230), green_mat));
+  auto box_g = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 165, 165), white_mat);
+  list.emplace_back(Transform::Translate::create(Transform::RotateY::create(box_g, -18), vec3(139, 0, 65)));
 
-  auto redbox = std::make_shared<Box>(vec3(265, 0, 295), vec3(430, 330, 460), red_mat);
-  list.emplace_back(Transform::Translate::create(redbox, vec3(100, 0, 0)));
+  auto box_r = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 330, 165), white_mat);
+  list.emplace_back(Transform::Translate::create(Transform::RotateY::create(box_r, 15), vec3(265, 0, 295)));
+  //  list.emplace_back(Transform::Translate::create(box_r, vec3(100, 0, 0)));
 
   return list;
 }
@@ -174,7 +176,7 @@ int main()
   // constexpr int ny = 360;
   // constexpr int nx = 160;
   // constexpr int ny = 90;
-  constexpr int sampling_count = 10;
+  constexpr int sampling_count = 500;
 
   // ** FILE ** //
   std::ofstream image("image.ppm");
