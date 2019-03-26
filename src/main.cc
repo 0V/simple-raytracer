@@ -16,12 +16,11 @@ const vec3 HalfAlbedo(0.5, 0.5, 0.5);
 
 std::random_device seed_gen;
 std::mt19937 engine(seed_gen());
-std::uniform_real_distribution<double> dist(-1, 1);
 std::uniform_real_distribution<double> dist_01(0, 1);
 
-constexpr double IgnoreLengthNearCamera = 0.00001;
+constexpr double IgnoreLengthNearCamera = 0.001;
+// constexpr int DepthCount = 50;
 constexpr int DepthCount = 20;
-//constexpr int DepthCount = 50;
 
 vec3 color(const Ray &r, HitableBase &world, int depth)
 {
@@ -155,6 +154,106 @@ std::vector<HitablePtr> cornell_box()
   return list;
 }
 
+std::vector<HitablePtr> cornell_box_smoke()
+{
+  std::vector<HitablePtr> list;
+
+  TexturePtr one_tex = std::make_shared<ConstantTexture>(Vectors::One);
+  TexturePtr zero_tex = std::make_shared<ConstantTexture>(Vectors::Zero);
+
+  MaterialPtr red_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.65, 0.05, 0.05)));
+  MaterialPtr white_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vectors::One * 0.73));
+  MaterialPtr green_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.12, 0.45, 0.15)));
+  MaterialPtr light_mat = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vectors::One * 7));
+
+  list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleYZ>(0, 555, 0, 555, 555, green_mat)));
+  list.emplace_back(std::make_shared<RectangleYZ>(0, 555, 0, 555, 0, red_mat));
+  list.emplace_back(std::make_shared<RectangleXZ>(113, 443, 127, 432, 554, light_mat));
+  list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXZ>(0, 555, 0, 555, 555, white_mat)));
+  list.emplace_back(std::make_shared<RectangleXZ>(0, 555, 0, 555, 0, white_mat));
+  list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXY>(0, 555, 0, 555, 555, white_mat)));
+
+  auto box_g = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 165, 165), white_mat);
+  auto box_g_m = Transform::Translate::create(Transform::RotateY::create(box_g, -18), vec3(130, 0, 65));
+  auto box_g_m_smoke = std::make_shared<ConstantMedium>(box_g_m, 0.01, one_tex);
+  list.emplace_back(box_g_m_smoke);
+
+  auto box_r = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 330, 165), white_mat);
+  auto box_r_m = Transform::Translate::create(Transform::RotateY::create(box_r, 15), vec3(265, 0, 295));
+  auto box_r_m_smoke = std::make_shared<ConstantMedium>(box_r_m, 0.01, zero_tex);
+  list.emplace_back(box_r_m_smoke);
+  //  list.emplace_back(Transform::Translate::create(box_r, vec3(100, 0, 0)));
+
+  return list;
+}
+
+std::vector<HitablePtr> cornell_box_smoke_ball()
+{
+  std::vector<HitablePtr> list;
+
+  TexturePtr one_tex = std::make_shared<ConstantTexture>(Vectors::One);
+  TexturePtr zero_tex = std::make_shared<ConstantTexture>(Vectors::Zero);
+  TexturePtr red_tex = std::make_shared<ConstantTexture>(vec3(1, 0.05, 0.05));
+  TexturePtr green_tex = std::make_shared<ConstantTexture>(vec3(0.05, 1, 0.05));
+  TexturePtr blue_tex = std::make_shared<ConstantTexture>(vec3(0.05, 0.05, 1));
+  TexturePtr yellow_tex = std::make_shared<ConstantTexture>(vec3(1, 1, 0.05));
+
+  MaterialPtr red_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.65, 0.05, 0.05)));
+  MaterialPtr white_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vectors::One * 0.73));
+  MaterialPtr green_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.12, 0.45, 0.15)));
+  MaterialPtr light_mat = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vectors::One * 7));
+
+  list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleYZ>(0, 555, 0, 555, 555, green_mat)));
+  list.emplace_back(std::make_shared<RectangleYZ>(0, 555, 0, 555, 0, red_mat));
+  list.emplace_back(std::make_shared<RectangleXZ>(113, 443, 127, 432, 554, light_mat));
+  list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXZ>(0, 555, 0, 555, 555, white_mat)));
+  list.emplace_back(std::make_shared<RectangleXZ>(0, 555, 0, 555, 0, white_mat));
+  list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXY>(0, 555, 0, 555, 555, white_mat)));
+
+  auto box_g = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 165, 165), white_mat);
+  auto box_g_m = Transform::Translate::create(Transform::RotateY::create(box_g, -18), vec3(130, 0, 65));
+  auto box_g_m_smoke = std::make_shared<ConstantMedium>(box_g_m, 0.01, one_tex);
+  list.emplace_back(box_g_m_smoke);
+
+  // auto box_r = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 330, 165), white_mat);
+  // auto box_r_m = Transform::Translate::create(Transform::RotateY::create(box_r, 15), vec3(265, 0, 295));
+  // auto box_r_m_smoke = std::make_shared<ConstantMedium>(box_r_m, 0.01, zero_tex);
+  // list.emplace_back(box_r_m_smoke);
+
+  auto ball_a = std::make_shared<Sphere>(vec3(265, 300, 295), 100, white_mat);
+  auto ball_a_smoke = std::make_shared<ConstantMedium>(ball_a, 0.01, zero_tex);
+  list.emplace_back(ball_a_smoke);
+
+  list.emplace_back(
+      std::make_shared<ConstantMedium>(
+          std::make_shared<Sphere>(vec3(435, 200, 295), 100, white_mat),
+          0.01, red_tex));
+
+  list.emplace_back(
+      std::make_shared<ConstantMedium>(
+          std::make_shared<Sphere>(vec3(335, 200, 295), 100, white_mat),
+          0.01, green_tex));
+
+  list.emplace_back(
+      std::make_shared<ConstantMedium>(
+          std::make_shared<Sphere>(vec3(35, 200, 295), 30, white_mat),
+          0.01, blue_tex));
+
+  list.emplace_back(
+      std::make_shared<ConstantMedium>(
+          std::make_shared<Sphere>(vec3(505, 200, 295), 30, light_mat),
+          0.01, yellow_tex));
+
+  list.emplace_back(
+      std::make_shared<ConstantMedium>(
+          std::make_shared<Sphere>(vec3(200, 200, 295), 30, white_mat),
+          0.1, yellow_tex));
+
+  //  list.emplace_back(Transform::Translate::create(box_r, vec3(100, 0, 0)));
+
+  return list;
+}
+
 // std::vector<HitablePtr> two_image_sphere()
 // {
 //   int nx, ny, nn;
@@ -168,15 +267,15 @@ std::vector<HitablePtr> cornell_box()
 
 int main()
 {
-  constexpr int nx = 820;
-  constexpr int ny = 820;
+  constexpr int nx = 800;
+  constexpr int ny = 800;
   // constexpr int nx = 1280;
   // constexpr int ny = 720;
   // constexpr int nx = 640;
   // constexpr int ny = 360;
   // constexpr int nx = 160;
   // constexpr int ny = 90;
-  constexpr int sampling_count = 500;
+  constexpr int sampling_count = 100;
 
   // ** FILE ** //
   std::ofstream image("image.ppm");
@@ -200,7 +299,9 @@ int main()
   // std::vector<HitablePtr> list = random_scene();
   //  std::vector<HitablePtr> list = two_perlin_sphere();
   // std::vector<HitablePtr> list = two_perlin_sphere_light();
-  std::vector<HitablePtr> list = cornell_box();
+  // std::vector<HitablePtr> list = cornell_box();;
+  //  std::vector<HitablePtr> list = cornell_box_smoke();
+  std::vector<HitablePtr> list = cornell_box_smoke_ball();
   // std::vector<HitablePtr> list = two_image_sphere();
 
   /*  list.emplace_back(std::make_shared<Sphere>(vec3(0, 0, -1), 0.5, lambertian));
@@ -239,10 +340,20 @@ int main()
       }
 
       col /= (double)sampling_count;
-      int ir = 255.99 * std::sqrt(col[0]);
-      int ig = 255.99 * std::sqrt(col[1]);
-      int ib = 255.99 * std::sqrt(col[2]);
-      image << ir << " " << ig << " " << ib << "\n";
+      int pixel[3];
+      pixel[0] = 255.99 * std::sqrt(col[0]);
+      pixel[1] = 255.99 * std::sqrt(col[1]);
+      pixel[2] = 255.99 * std::sqrt(col[2]);
+
+      for (int i = 0; i < 3; i++)
+      {
+        if (pixel[i] > 255)
+        {
+          pixel[i] = 255;
+        }
+      }
+
+      image << pixel[0] << " " << pixel[1] << " " << pixel[2] << "\n";
     }
   }
 }

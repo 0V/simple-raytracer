@@ -19,7 +19,7 @@ public:
   {
     vec3 target = record.normal + sampler.sample();
     scattered = Ray(record.p, target, r_in.time());
-    attenuation = albedo->value(0, 0, record.p);
+    attenuation = albedo->value(record.u, record.v, record.p);
     return true;
   }
 };

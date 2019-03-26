@@ -11,7 +11,7 @@
 class Box : public HitableBase
 {
 private:
-  HitablePtr list_;
+  std::shared_ptr<HitableList> list_;
   MaterialPtr mat_ptr_;
 
 public:
