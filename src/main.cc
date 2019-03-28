@@ -375,7 +375,6 @@ int main()
   // std::vector<HitablePtr> list = cornell_box();;
   //  std::vector<HitablePtr> list = cornell_box_smoke();
   std::vector<HitablePtr> list = next_week_final();
-  list.emplace_back(cornell_box());
   // std::vector<HitablePtr> list = two_image_sphere();
 
   /*  list.emplace_back(std::make_shared<Sphere>(vec3(0, 0, -1), 0.5, lambertian));
