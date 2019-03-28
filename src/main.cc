@@ -254,6 +254,79 @@ std::vector<HitablePtr> cornell_box_smoke_ball()
   return list;
 }
 
+std::vector<HitablePtr> next_week_final()
+{
+  constexpr int nb = 20;
+
+  constexpr int ns = 1000;
+  std::vector<HitablePtr> box_list;
+  std::vector<HitablePtr> boxlist2(ns);
+
+  std::vector<HitablePtr> list;
+  MaterialPtr white = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vectors::One * 0.73));
+  MaterialPtr ground = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.48, 0.83, 0.53)));
+
+  for (int i = 0; i < nb; i++)
+  {
+    for (int j = 0; j < nb; j++)
+    {
+      float w = 100;
+      float x0 = -1000 + i * w;
+      float z0 = -1000 + j * w;
+      float y0 = 0;
+      float x1 = x0 + w;
+      float y1 = 100 * (dist_01(engine) + 0.01);
+      float z1 = z0 + w;
+      box_list.emplace_back(std::make_shared<Box>(vec3(x0, y0, z0), vec3(x1, y1, z1), ground));
+    }
+  }
+
+  list.emplace_back(std::make_shared<BvhNode>(&box_list[0], box_list.size(), 0, 1));
+
+  MaterialPtr red_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.65, 0.05, 0.05)));
+  MaterialPtr white_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(Vectors::One * 0.73));
+  MaterialPtr green_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.12, 0.45, 0.15)));
+  MaterialPtr light = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vectors::One * 7));
+
+  list.emplace_back(std::make_shared<RectangleXZ>(123, 423, 147, 412, 554, light));
+
+  vec3 center(400, 400, 400);
+
+  list.emplace_back(std::make_shared<MovingSphere>(center, center + vec3(30, 0, 0),
+                                                   0, 1, 50,
+                                                   std::make_shared<Lambertian>(
+                                                       std::make_shared<ConstantTexture>(
+                                                           vec3(0.7, 0.3, 0.1)))));
+
+  list.emplace_back(std::make_shared<Sphere>(vec3(260, 150, 45), 50,
+                                             std::make_shared<Dielectric>(1.5)));
+
+  list.emplace_back(std::make_shared<Sphere>(vec3(0, 150, 145), 50,
+                                             std::make_shared<Metal>(vec3(0.8, 0.8, 0.9), 10.0)));
+
+  HitablePtr boundary = std::make_shared<Sphere>(vec3(360, 150, 145), 70,
+                                                 std::make_shared<Dielectric>(1.5));
+  list.emplace_back(boundary);
+  list.emplace_back(std::make_shared<ConstantMedium>(boundary, 0.2, std::make_shared<ConstantTexture>(vec3(0.2, 0.4, 0.9))));
+
+  HitablePtr boundary2 = std::make_shared<Sphere>(vec3(0, 0, 0), 5000,
+                                                  std::make_shared<Dielectric>(1.5));
+  list.emplace_back(std::make_shared<ConstantMedium>(boundary2, 0.0001, std::make_shared<ConstantTexture>(Vectors::One)));
+
+  TexturePtr pertext = std::make_shared<PerlinNoiseTexture>(0.1);
+  list.emplace_back(std::make_shared<Sphere>(vec3(220, 280, 300), 80, std::make_shared<Lambertian>(pertext)));
+
+  for (int j = 0; j < ns; j++)
+  {
+    boxlist2[j] = std::make_shared<Sphere>(vec3(165 * dist_01(engine), 165 * dist_01(engine), 165 * dist_01(engine)), 10, white);
+  }
+  list.emplace_back(Transform::Translate::create(
+      Transform::RotateY::create(std::make_shared<BvhNode>(&boxlist2[0], boxlist2.size(), 0.0, 1.0), 15),
+      vec3(-100, 270, 395)));
+
+  return list;
+}
+
 // std::vector<HitablePtr> two_image_sphere()
 // {
 //   int nx, ny, nn;
@@ -301,7 +374,8 @@ int main()
   // std::vector<HitablePtr> list = two_perlin_sphere_light();
   // std::vector<HitablePtr> list = cornell_box();;
   //  std::vector<HitablePtr> list = cornell_box_smoke();
-  std::vector<HitablePtr> list = cornell_box_smoke_ball();
+  std::vector<HitablePtr> list = next_week_final();
+  list.emplace_back(cornell_box());
   // std::vector<HitablePtr> list = two_image_sphere();
 
   /*  list.emplace_back(std::make_shared<Sphere>(vec3(0, 0, -1), 0.5, lambertian));
@@ -310,11 +384,8 @@ int main()
   list.emplace_back(std::make_shared<Sphere>(vec3(-1, 0, -1), -0.45, dilectric));*/
 
   HitableList hitables(list);
+  //BvhNode hitables(&list[0], list.size(), 0, 1);
 
-  //  vec3 lookfrom(-1, 1, 2);
-  //  vec3 lookat(0, 0, -1);
-  // vec3 lookfrom(23, 23, 3);
-  // vec3 lookat(0, 0, 0);
   vec3 lookfrom(278, 278, -800);
   vec3 lookat(278, 278, 0);
   double vfov = 40.0;

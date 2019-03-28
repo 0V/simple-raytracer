@@ -10,6 +10,7 @@
 #include "box.h"
 #include "transform.h"
 #include "constant_medium.h"
+#include "bvh_node.h"
 
 #endif // RAYTRACER_OBJECTS_OBJECTS_H_
 
