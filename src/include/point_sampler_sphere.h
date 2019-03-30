@@ -43,6 +43,11 @@ public:
     } while (p.square_length() >= 1);
     return p;
   }
+
+  vec3 sample_normal() const
+  {
+    return sample().normalize();
+  }
 };
 
 #endif // RAYTRACER_POINT_SAMPLER_SPHERE_H_

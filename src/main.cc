@@ -14,6 +14,7 @@ const vec3 White(1, 1, 1);
 const vec3 Black(0, 0, 0);
 const vec3 HalfAlbedo(0.5, 0.5, 0.5);
 
+
 std::random_device seed_gen;
 std::mt19937 engine(seed_gen());
 std::uniform_real_distribution<double> dist_01(0, 1);
@@ -372,11 +373,8 @@ int main()
   // std::vector<HitablePtr> list = random_scene();
   //  std::vector<HitablePtr> list = two_perlin_sphere();
   // std::vector<HitablePtr> list = two_perlin_sphere_light();
-  // std::vector<HitablePtr> list = cornell_box();;
+  std::vector<HitablePtr> list = cornell_box();
   //  std::vector<HitablePtr> list = cornell_box_smoke();
-  std::vector<HitablePtr> list = next_week_final();
-  auto cornell =  cornell_box();
-  std::copy(cornell.begin(),cornell.end(),std::back_inserter(list));
 
   // std::vector<HitablePtr> list = two_image_sphere();
 
@@ -384,6 +382,10 @@ int main()
   list.emplace_back(std::make_shared<Sphere>(vec3(1, 0, -1), 0.3, metal4));
   list.emplace_back(std::make_shared<Sphere>(vec3(0, -100.5, -1), 100, lambertian3));
   list.emplace_back(std::make_shared<Sphere>(vec3(-1, 0, -1), -0.45, dilectric));*/
+
+  // std::vector<HitablePtr> list = next_week_final();
+  // auto cornell =  cornell_box();
+  // std::copy(cornell.begin(),cornell.end(),std::back_inserter(list));
 
   HitableList hitables(list);
   //BvhNode hitables(&list[0], list.size(), 0, 1);
