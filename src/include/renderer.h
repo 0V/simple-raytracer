@@ -28,11 +28,20 @@ class Renderer
 private:
   ValueSampler<double> sampler01_ = ValueSampler<double>(0, 1);
 
+public:
   int nx = 800;
   int ny = 800;
   int sampling_count = 100;
+  vec3 lookfrom = vec3(278, 278, -800);
+  vec3 lookat = vec3(278, 278, 0);
+  double dist_to_focus = 10;
+  double aperture = 0;
+  double vfov = 40;
 
-public:
+  inline double pdf(const vec3 &p)
+  {
+    return 0.25 * M_PI;
+  }
   vec3 color(const Ray &r, HitableBase &world, int depth)
   {
     HitRecord record;
@@ -398,11 +407,6 @@ public:
     HitableList hitables(list);
     //BvhNode hitables(&list[0], list.size(), 0, 1);
 
-    vec3 lookfrom(278, 278, -800);
-    vec3 lookat(278, 278, 0);
-    double vfov = 40.0;
-    double dist_to_focus = 10.0;
-    double aperture = 0;
     //  CameraPtr camera = std::make_shared<RaeCamera>(120, 2);
     // CameraPtr camera = std::make_shared<RaeCamera>(lookfrom, lookat, vec3(0, 1, 0), 90, (double)nx / ny);
 
