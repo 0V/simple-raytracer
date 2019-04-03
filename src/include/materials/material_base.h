@@ -9,7 +9,15 @@ struct HitRecord;
 class MaterialBase
 {
 public:
-  virtual bool scatter(const Ray &r_in, const HitRecord &record, vec3 &attenuation, Ray &scattered) const = 0;
+  virtual bool scatter(const Ray &r_in, const HitRecord &record, vec3 &albedo, Ray &scattered, double &pdf) const
+  {
+    return false;
+  }
+
+  virtual double scattering_pdf(const Ray &r_in, const HitRecord &record, const Ray &scattered) const
+  {
+    return false;
+  }
   virtual vec3 emitted(const double &u, const double &v, const vec3 &p) const
   {
     return Vectors::Zero;

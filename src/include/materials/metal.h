@@ -3,6 +3,7 @@
 
 #include "vector_utility.h"
 #include "objects/hitable_base.h"
+#include "point_sampler_sphere.h"
 
 class Metal : public MaterialBase
 {

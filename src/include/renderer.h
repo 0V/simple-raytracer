@@ -38,10 +38,6 @@ public:
   double aperture = 0;
   double vfov = 40;
 
-  inline double pdf(const vec3 &p)
-  {
-    return 0.25 * M_PI;
-  }
   vec3 color(const Ray &r, HitableBase &world, int depth)
   {
     HitRecord record;
@@ -50,11 +46,12 @@ public:
     {
 
       Ray scattered;
-      vec3 aten;
+      vec3 albedo;
       vec3 emitted = record.mat_ptr->emitted(record.u, record.v, record.p);
-      if (depth < DepthCount && record.mat_ptr->scatter(r, record, aten, scattered))
+      double pdf;
+      if (depth < DepthCount && record.mat_ptr->scatter(r, record, albedo, scattered, pdf))
       {
-        return emitted + aten.product(color(scattered, world, (depth + 1)));
+        return emitted + (record.mat_ptr->scattering_pdf(r, record, scattered) * albedo).product(color(scattered, world, (depth + 1))) / pdf;
       }
       else
       {
