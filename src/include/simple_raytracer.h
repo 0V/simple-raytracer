@@ -9,5 +9,6 @@
 #include "objects/objects.h"
 #include "materials/materials.h"
 #include "textures/textures.h"
+#include "pdfs/pdfs.h"
 
 #endif // RAYTRACER_SIMPLE_RAYTRACER_H_

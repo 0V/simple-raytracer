@@ -47,11 +47,139 @@ public:
 
       Ray scattered;
       vec3 albedo;
-      vec3 emitted = record.mat_ptr->emitted(record.u, record.v, record.p);
+      vec3 emitted = record.mat_ptr->emitted(r, record, record.u, record.v, record.p);
       double pdf;
       if (depth < DepthCount && record.mat_ptr->scatter(r, record, albedo, scattered, pdf))
       {
         return emitted + (record.mat_ptr->scattering_pdf(r, record, scattered) * albedo).product(color(scattered, world, (depth + 1))) / pdf;
+      }
+      else
+      {
+        return emitted;
+      }
+    }
+    else
+    {
+      return Vectors::Zero;
+      // vec3 dir_unit = r.direction().normalize();
+      // double t = 0.5 * (dir_unit.y + 1.0);
+      // return (1.0 - t) * OneAll + t * ColorMax;
+    }
+  }
+
+  vec3 importance_hard_color(const Ray &r, HitableBase &world, int depth)
+  {
+    HitRecord record;
+
+    if (world.hit(r, IgnoreLengthNearCamera, INFINITY, record))
+    {
+
+      Ray scattered;
+      vec3 albedo;
+      vec3 emitted = record.mat_ptr->emitted(r, record, record.u, record.v, record.p);
+      double pdf;
+      if (depth < DepthCount && record.mat_ptr->scatter(r, record, albedo, scattered, pdf))
+      {
+        vec3 on_light = vec3(213 + sampler01_.sample() * (343 - 213), 554, 227 + sampler01_.sample() * (332 - 227));
+        vec3 to_light = on_light - record.p;
+        double distance_squared = to_light.square_length();
+        to_light = to_light.normalize();
+        if (to_light * record.normal < 0)
+        {
+          return emitted;
+        }
+
+        double light_area = (334 - 213) * (332 - 227);
+        double light_cosine = std::fabs(to_light.y);
+        if (light_cosine < 0.000001)
+        {
+          return emitted;
+        }
+        pdf = distance_squared / (light_cosine * light_area);
+        scattered = Ray(record.p, to_light, r.time());
+        return emitted + (record.mat_ptr->scattering_pdf(r, record, scattered) * albedo).product(importance_hard_color(scattered, world, (depth + 1))) / pdf;
+      }
+      else
+      {
+        return emitted;
+      }
+    }
+    else
+    {
+      return Vectors::Zero;
+      // vec3 dir_unit = r.direction().normalize();
+      // double t = 0.5 * (dir_unit.y + 1.0);
+      // return (1.0 - t) * OneAll + t * ColorMax;
+    }
+  }
+
+  vec3 importance_sphere_color(const Ray &r, HitableBase &world, int depth)
+  {
+    HitRecord record;
+
+    if (world.hit(r, IgnoreLengthNearCamera, INFINITY, record))
+    {
+
+      Ray scattered;
+      vec3 albedo;
+      vec3 emitted = record.mat_ptr->emitted(r, record, record.u, record.v, record.p);
+      double pdf;
+      if (depth < DepthCount && record.mat_ptr->scatter(r, record, albedo, scattered, pdf))
+      {
+        LambertPdf p(record.normal);
+        // vec3 on_light = vec3(213 + sampler01_.sample() * (343 - 213), 554, 227 + sampler01_.sample() * (332 - 227));
+        // vec3 to_light = on_light - record.p;
+        // double distance_squared = to_light.square_length();
+        // to_light = to_light.normalize();
+        // if (to_light * record.normal < 0)
+        // {
+        //   return emitted;
+        // }
+
+        // double light_area = (334 - 213) * (332 - 227);
+        // double light_cosine = std::fabs(to_light.y);
+        // if (light_cosine < 0.000001)
+        // {
+        //   return emitted;
+        // }
+        scattered = Ray(record.p, p.generate(), r.time());
+        pdf = p.value(scattered.direction());
+        return emitted + (record.mat_ptr->scattering_pdf(r, record, scattered) * albedo).product(importance_sphere_color(scattered, world, (depth + 1))) / pdf;
+      }
+      else
+      {
+        return emitted;
+      }
+    }
+    else
+    {
+      return Vectors::Zero;
+      // vec3 dir_unit = r.direction().normalize();
+      // double t = 0.5 * (dir_unit.y + 1.0);
+      // return (1.0 - t) * OneAll + t * ColorMax;
+    }
+  }
+
+  vec3 importance_color(const Ray &r, HitableBase &world, int depth)
+  {
+    HitRecord record;
+
+    if (world.hit(r, IgnoreLengthNearCamera, INFINITY, record))
+    {
+
+      Ray scattered;
+      vec3 albedo;
+      vec3 emitted = record.mat_ptr->emitted(r, record, record.u, record.v, record.p);
+      double pdf;
+      if (depth < DepthCount && record.mat_ptr->scatter(r, record, albedo, scattered, pdf))
+      {
+        HitablePtr light_shape = std::make_shared<RectangleXZ>(213, 343, 227, 332, 554, nullptr);
+        PdfPtr p0 = std::make_shared<HitablePdf>(light_shape, record.p);
+        PdfPtr p1 = std::make_shared<LambertPdf>(record.normal);
+        MixturePdf p(p0, p1, 0.7);
+        scattered = Ray(record.p, p.generate(), r.time());
+        pdf = p.value(scattered.direction());
+        return emitted + (record.mat_ptr->scattering_pdf(r, record, scattered) * albedo).product(importance_color(scattered, world, (depth + 1))) / pdf;
       }
       else
       {
@@ -156,7 +284,7 @@ public:
 
     list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleYZ>(0, 555, 0, 555, 555, green_mat)));
     list.emplace_back(std::make_shared<RectangleYZ>(0, 555, 0, 555, 0, red_mat));
-    list.emplace_back(std::make_shared<RectangleXZ>(213, 343, 227, 332, 554, light_mat));
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXZ>(213, 343, 227, 332, 554, light_mat)));
     list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXZ>(0, 555, 0, 555, 555, white_mat)));
     list.emplace_back(std::make_shared<RectangleXZ>(0, 555, 0, 555, 0, white_mat));
     list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXY>(0, 555, 0, 555, 555, white_mat)));
@@ -420,7 +548,7 @@ public:
           double u = (double)(i + sampler01_.sample()) / nx;
           double v = (double)(j + sampler01_.sample()) / ny;
           //        col += color(cam.get_ray(u, v), hitables, 0);
-          col += color(camera->get_ray(u, v), hitables, 0);
+          col += importance_color(camera->get_ray(u, v), hitables, 0);
         }
 
         col /= (double)sampling_count;

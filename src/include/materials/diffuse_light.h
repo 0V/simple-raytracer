@@ -18,9 +18,16 @@ public:
     return false;
   }
 
-  virtual vec3 emitted(const double &u, const double &v, const vec3 &p) const
+  virtual vec3 emitted(const Ray &r_in, const HitRecord &record, const double &u, const double &v, const vec3 &p) const
   {
-    return emit_->value(u, v, p);
+    if (record.normal * r_in.direction() < 0.0)
+    {
+      return emit_->value(u, v, p);
+    }
+    else
+    {
+      return Vectors::Zero;
+    }
   }
 };
 #endif // RAYTRACER_MATERIALS_LDIFFUSE_LIGHTH_

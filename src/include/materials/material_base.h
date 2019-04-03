@@ -18,7 +18,7 @@ public:
   {
     return false;
   }
-  virtual vec3 emitted(const double &u, const double &v, const vec3 &p) const
+  virtual vec3 emitted(const Ray &r_in, const HitRecord &record, const double &u, const double &v, const vec3 &p) const
   {
     return Vectors::Zero;
   };

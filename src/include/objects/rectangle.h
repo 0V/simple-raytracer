@@ -1,6 +1,7 @@
 #ifndef RAYTRACER_OBJECTS_RECTANGLE_XY_H_
 #define RAYTRACER_OBJECTS_RECTANGLE_XY_H_
 
+#include "value_sampler.h"
 #include "vector_utility.h"
 #include "objects/hitable_base.h"
 
@@ -57,17 +58,28 @@ constexpr double RectangleHalfThickness = 0.0001;
 template <int N, int M>
 class Rectangle : public HitableBase
 {
+private:
   MaterialPtr mat_ptr_;
+  ValueSampler<double> sampler_ = ValueSampler<double>(0, 1);
 
 public:
-  double a0, a1, b0, b1, k;
+  double a0,
+      a1,
+      b0,
+      b1,
+      k;
+  double range_a, range_b;
   double range_a_inv, range_b_inv;
+  double area;
 
   Rectangle() {}
   Rectangle(const double &a0_, const double &a1_,
             const double &b0_, const double &b1_, const double &k_,
             const MaterialPtr &mat_ptr)
-      : mat_ptr_(mat_ptr), a0(a0_), a1(a1_), b0(b0_), b1(b1_), k(k_), range_a_inv(1.0 / (a1 - a0)), range_b_inv(1.0 / (b1 - b0)) {}
+      : mat_ptr_(mat_ptr), a0(a0_), a1(a1_), b0(b0_), b1(b1_), k(k_),
+       range_a(a1 - a0), range_b(b1 - b0),
+       range_a_inv(1.0 / range_a), range_b_inv(1.0 / range_b),
+       area (range_a * range_b) {}
 
   // HitRecord will be changed
   virtual bool hit(const Ray &r, const double &t_min, const double &t_max, HitRecord &dist) const
@@ -100,6 +112,30 @@ public:
   {
     box = AABB(vec3(a0, b0, k - RectangleHalfThickness), vec3(a1, b1, k + RectangleHalfThickness));
     return true;
+  }
+
+  virtual double pdf_value(const vec3 &o, const vec3 &v) const
+  {
+    HitRecord rec;
+    if (this->hit(Ray(o, v), 0.0001, INFINITY, rec))
+    {
+      double distance_squared = rec.t * rec.t * v.square_length();
+      double cosine = std::fabs(v * rec.normal) / v.length();
+      return distance_squared / (cosine * area);
+    }
+    else
+    {
+      return 0;
+    }
+  }
+
+  virtual vec3 random(const vec3 &o) const
+  {
+    vec3 random_point;
+    random_point[get_axis_index()] = k;
+    random_point[N] = a0 + sampler_.sample() * range_a;
+    random_point[M] = b0 + sampler_.sample() * range_b;
+    return random_point - o;
   }
 
   constexpr vec3 get_axis() const
