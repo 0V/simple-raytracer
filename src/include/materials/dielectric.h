@@ -18,9 +18,12 @@ public:
 
   Dielectric(double ref_idx_) : ref_idx(ref_idx_), inverse_ref_idx(1.0 / ref_idx_) {}
 
-  virtual bool scatter(const Ray &r_in, const HitRecord &record, vec3 &attenuation, Ray &scattered) const
+  virtual bool scatter(const Ray &r_in, const HitRecord &record, ScatteredRecord &dist) const
   {
-    attenuation = vec3(1, 1, 1);
+    dist.is_specular = true;
+    dist.pdf_ptr = nullptr;
+    dist.attenuation = Vectors::One;
+
     double ni_over_nt;
     vec3 refracted;
     vec3 outward_normal;
@@ -47,16 +50,16 @@ public:
       double prob = schlick_fresnel(cosine, ni_over_nt);
       if (dist_(seed_gen_) < prob)
       {
-        scattered = Ray(record.p, reflected);
+        dist.specular_ray = Ray(record.p, reflected);
       }
       else
       {
-        scattered = Ray(record.p, refracted);
+        dist.specular_ray = Ray(record.p, refracted);
       }
     }
     else
     {
-      scattered = Ray(record.p, reflected);
+      dist.specular_ray = Ray(record.p, reflected);
     }
 
     return true;

@@ -31,12 +31,13 @@ private:
 public:
   int nx = 800;
   int ny = 800;
-  int sampling_count = 10;
+  int sampling_count = 100;
   vec3 lookfrom = vec3(278, 278, -800);
   vec3 lookat = vec3(278, 278, 0);
   double dist_to_focus = 10;
   double aperture = 0;
   double vfov = 40;
+  std::string file_name = "image.ppm";
 
   vec3 color(const Ray &r, const HitablePtr &world, const HitablePtr &light_shape, int depth)
   {
@@ -203,6 +204,70 @@ public:
 
     auto box_r = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 330, 165), metal_mat);
     list.emplace_back(Transform::Translate::create(Transform::RotateY::create(box_r, 15), vec3(265, 0, 295)));
+    //  list.emplace_back(Transform::Translate::create(box_r, vec3(100, 0, 0)));
+
+    return list;
+  }
+
+  std::vector<HitablePtr> cornell_box_glass()
+  {
+    std::vector<HitablePtr> list;
+
+    MaterialPtr red_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.65, 0.05, 0.05)));
+    MaterialPtr white_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.73, 0.73, 0.73)));
+    MaterialPtr green_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.12, 0.45, 0.15)));
+    MaterialPtr light_mat = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vectors::One * 15));
+
+    MaterialPtr metal_mat = std::make_shared<Metal>(vec3(0.8, 0.85, 0.88), 0);
+    MaterialPtr glass_mat = std::make_shared<Dielectric>(1.5);
+
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleYZ>(0, 555, 0, 555, 555, green_mat)));
+    list.emplace_back(std::make_shared<RectangleYZ>(0, 555, 0, 555, 0, red_mat));
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXZ>(213, 343, 227, 332, 554, light_mat)));
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXZ>(0, 555, 0, 555, 555, white_mat)));
+    list.emplace_back(std::make_shared<RectangleXZ>(0, 555, 0, 555, 0, white_mat));
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXY>(0, 555, 0, 555, 555, white_mat)));
+
+    // auto box_r = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 165, 165), white_mat);
+    // list.emplace_back(Transform::Translate::create(Transform::RotateY::create(box_r, -18), vec3(139, 0, 65)));
+
+    auto box_r = std::make_shared<Sphere>(vec3(190, 90, 90), 90, glass_mat);
+    list.emplace_back(box_r);
+
+    auto box_g = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 330, 165), metal_mat);
+    list.emplace_back(Transform::Translate::create(Transform::RotateY::create(box_g, 15), vec3(265, 0, 295)));
+    //  list.emplace_back(Transform::Translate::create(box_r, vec3(100, 0, 0)));
+
+    return list;
+  }
+
+  std::vector<HitablePtr> cornell_box_sds_path()
+  {
+    std::vector<HitablePtr> list;
+
+    MaterialPtr red_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.65, 0.05, 0.05)));
+    MaterialPtr white_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.73, 0.73, 0.73)));
+    MaterialPtr green_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.12, 0.45, 0.15)));
+    MaterialPtr light_mat = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vectors::One * 15));
+
+    MaterialPtr metal_mat = std::make_shared<Metal>(vec3(0.8, 0.85, 0.88), 0);
+    MaterialPtr glass_mat = std::make_shared<Dielectric>(1.5);
+
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleYZ>(0, 555, 0, 555, 555, green_mat)));
+    list.emplace_back(std::make_shared<RectangleYZ>(0, 555, 0, 555, 0, red_mat));
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXZ>(213, 343, 227, 332, 554, light_mat)));
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXZ>(0, 555, 0, 555, 555, white_mat)));
+    list.emplace_back(std::make_shared<RectangleXZ>(0, 555, 0, 555, 0, white_mat));
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXY>(0, 555, 0, 555, 555, white_mat)));
+
+    // auto box_r = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 165, 165), white_mat);
+    // list.emplace_back(Transform::Translate::create(Transform::RotateY::create(box_r, -18), vec3(139, 0, 65)));
+
+    auto box_r = std::make_shared<Sphere>(vec3(190, 180, 380), 180, glass_mat);
+    list.emplace_back(box_r);
+
+    auto box_g = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 330, 165), white_mat);
+    list.emplace_back(Transform::Translate::create(Transform::RotateY::create(box_g, 15), vec3(190, 90, 280)));
     //  list.emplace_back(Transform::Translate::create(box_r, vec3(100, 0, 0)));
 
     return list;
@@ -396,7 +461,7 @@ public:
   {
 
     // ** FILE ** //
-    std::ofstream image("image.ppm");
+    std::ofstream image(file_name);
     image << "P3"
           << "\n";
     image << nx << " " << ny << "\n";
@@ -424,7 +489,7 @@ public:
     // std::vector<HitablePtr> list = random_scene();
     //  std::vector<HitablePtr> list = two_perlin_sphere();
     // std::vector<HitablePtr> list = two_perlin_sphere_light();
-    std::vector<HitablePtr> list = cornell_box_metal();
+    std::vector<HitablePtr> list = cornell_box_sds_path();
     //  std::vector<HitablePtr> list = cornell_box_smoke();
 
     // std::vector<HitablePtr> list = two_image_sphere();

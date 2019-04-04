@@ -82,9 +82,8 @@ public:
   virtual vec3 random(const vec3 &o) const
   {
     vec3 direction = center - o;
-
     Onb uvw(direction);
-    return uvw.local(sampler_.sample(radius,direction.square_length()));
+    return uvw.local(sampler_.sample(radius, direction.square_length()));
   }
 
   void get_sphere_uv(const vec3 &p, double &u_dist, double &v_dist) const
