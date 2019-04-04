@@ -31,7 +31,7 @@ private:
 public:
   int nx = 800;
   int ny = 800;
-  int sampling_count = 100;
+  int sampling_count = 10;
   vec3 lookfrom = vec3(278, 278, -800);
   vec3 lookat = vec3(278, 278, 0);
   double dist_to_focus = 10;
@@ -48,12 +48,19 @@ public:
       vec3 emitted = record.mat_ptr->emitted(r, record, record.u, record.v, record.p);
       double pdf;
       if (depth < DepthCount && record.mat_ptr->scatter(r, record, srec))
-      { 
-        PdfPtr p0 = std::make_shared<HitablePdf>(light_shape, record.p);
-        MixturePdf p(p0, srec.pdf_ptr, 0.5);
-        Ray scattered = Ray(record.p, p.generate(), r.time());
-        pdf = p.value(scattered.direction());
-        return emitted + (record.mat_ptr->scattering_pdf(r, record, scattered) * srec.attenuation).product(color(scattered, world, light_shape, (depth + 1))) / pdf;
+      {
+        if (srec.is_specular)
+        {
+          return srec.attenuation.product(color(srec.specular_ray, world, light_shape, (depth + 1)));
+        }
+        else
+        {
+          PdfPtr p0 = std::make_shared<HitablePdf>(light_shape, record.p);
+          MixturePdf p(p0, srec.pdf_ptr, 0.5);
+          Ray scattered = Ray(record.p, p.generate(), r.time());
+          pdf = p.value(scattered.direction());
+          return emitted + (record.mat_ptr->scattering_pdf(r, record, scattered) * srec.attenuation).product(color(scattered, world, light_shape, (depth + 1))) / pdf;
+        }
       }
       else
       {
@@ -68,7 +75,6 @@ public:
       // return (1.0 - t) * OneAll + t * ColorMax;
     }
   }
-
 
   std::vector<HitablePtr> random_scene()
   {
@@ -168,6 +174,34 @@ public:
     list.emplace_back(Transform::Translate::create(Transform::RotateY::create(box_g, -18), vec3(139, 0, 65)));
 
     auto box_r = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 330, 165), white_mat);
+    list.emplace_back(Transform::Translate::create(Transform::RotateY::create(box_r, 15), vec3(265, 0, 295)));
+    //  list.emplace_back(Transform::Translate::create(box_r, vec3(100, 0, 0)));
+
+    return list;
+  }
+
+  std::vector<HitablePtr> cornell_box_metal()
+  {
+    std::vector<HitablePtr> list;
+
+    MaterialPtr red_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.65, 0.05, 0.05)));
+    MaterialPtr white_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.73, 0.73, 0.73)));
+    MaterialPtr green_mat = std::make_shared<Lambertian>(std::make_shared<ConstantTexture>(vec3(0.12, 0.45, 0.15)));
+    MaterialPtr light_mat = std::make_shared<DiffuseLight>(std::make_shared<ConstantTexture>(Vectors::One * 15));
+
+    MaterialPtr metal_mat = std::make_shared<Metal>(vec3(0.8, 0.85, 0.88), 0);
+
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleYZ>(0, 555, 0, 555, 555, green_mat)));
+    list.emplace_back(std::make_shared<RectangleYZ>(0, 555, 0, 555, 0, red_mat));
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXZ>(213, 343, 227, 332, 554, light_mat)));
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXZ>(0, 555, 0, 555, 555, white_mat)));
+    list.emplace_back(std::make_shared<RectangleXZ>(0, 555, 0, 555, 0, white_mat));
+    list.emplace_back(std::make_shared<FlipNormals>(std::make_shared<RectangleXY>(0, 555, 0, 555, 555, white_mat)));
+
+    auto box_g = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 165, 165), white_mat);
+    list.emplace_back(Transform::Translate::create(Transform::RotateY::create(box_g, -18), vec3(139, 0, 65)));
+
+    auto box_r = std::make_shared<Box>(vec3(0, 0, 0), vec3(165, 330, 165), metal_mat);
     list.emplace_back(Transform::Translate::create(Transform::RotateY::create(box_r, 15), vec3(265, 0, 295)));
     //  list.emplace_back(Transform::Translate::create(box_r, vec3(100, 0, 0)));
 
@@ -390,7 +424,7 @@ public:
     // std::vector<HitablePtr> list = random_scene();
     //  std::vector<HitablePtr> list = two_perlin_sphere();
     // std::vector<HitablePtr> list = two_perlin_sphere_light();
-    std::vector<HitablePtr> list = cornell_box();
+    std::vector<HitablePtr> list = cornell_box_metal();
     //  std::vector<HitablePtr> list = cornell_box_smoke();
 
     // std::vector<HitablePtr> list = two_image_sphere();
@@ -403,9 +437,9 @@ public:
     // std::vector<HitablePtr> list = next_week_final();
     // auto cornell =  cornell_box();
     // std::copy(cornell.begin(),cornell.end(),std::back_inserter(list));
-            HitablePtr light_shape = std::make_shared<RectangleXZ>(213, 343, 227, 332, 554, nullptr);
+    HitablePtr light_shape = std::make_shared<RectangleXZ>(213, 343, 227, 332, 554, nullptr);
 
-HitablePtr hitables = std::make_shared<HitableList>(list);
+    HitablePtr hitables = std::make_shared<HitableList>(list);
     //BvhNode hitables(&list[0], list.size(), 0, 1);
 
     //  CameraPtr camera = std::make_shared<RaeCamera>(120, 2);

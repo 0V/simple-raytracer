@@ -2,6 +2,7 @@
 #define RAYTRACER_MATERIALS_METAL_H_
 
 #include "vector_utility.h"
+#include "materials/material_base.h"
 #include "objects/hitable_base.h"
 #include "point_sampler_sphere.h"
 
@@ -17,12 +18,13 @@ public:
   Metal() {}
   Metal(vec3 albedo_, double fuzz_ = 0) : albedo(albedo_), fuzz(fuzz_) {}
 
-  virtual bool scatter(const Ray &r_in, const HitRecord &record, vec3 &attenuation, Ray &scattered) const
+  virtual bool scatter(const Ray &r_in, const HitRecord &record, ScatteredRecord &dist) const
   {
     vec3 reflected = reflect(r_in.direction(), record.normal).normalize();
-    scattered = Ray(record.p, reflected + (fuzz * sampler.sample()));
-    attenuation = albedo;
-    return (scattered.direction() * record.normal) > 0;
+    dist.specular_ray = Ray(record.p, reflected + (fuzz * sampler.sample()));
+    dist.attenuation = albedo;
+    dist.is_specular = true;
+    return true;
   }
 };
 
