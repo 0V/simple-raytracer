@@ -4,9 +4,14 @@
 #include <memory>
 #include "hitable_base.h"
 #include "materials/material_base.h"
+#include "point_sampler_mc.h"
+#include "onb.h"
 
 class Sphere : public HitableBase
 {
+private:
+  PointSamplerToSphere sampler_;
+
 public:
   vec3 center;
   double radius;
@@ -59,12 +64,35 @@ public:
     return true;
   }
 
+  virtual double pdf_value(const vec3 &o, const vec3 &v) const
+  {
+    HitRecord rec;
+    if (this->hit(Ray(o, v), 0.0001, INFINITY, rec))
+    {
+      double cos_theta_max = std::sqrt(1 - radius * radius / (center - o).square_length());
+      double solid_angle = 2 * M_PI * (1 - cos_theta_max);
+      return 1 / solid_angle;
+    }
+    else
+    {
+      return 0;
+    }
+  }
+
+  virtual vec3 random(const vec3 &o) const
+  {
+    vec3 direction = center - o;
+
+    Onb uvw(direction);
+    return uvw.local(sampler_.sample(radius,direction.square_length()));
+  }
+
   void get_sphere_uv(const vec3 &p, double &u_dist, double &v_dist) const
   {
     double phi = std::atan2(p.y, p.x);
     double theta = std::acos(p.y);
     u_dist = 0.5 - phi / M_PI;
-    v_dist = theta / M_PI + - 0.5;
+    v_dist = theta / M_PI + -0.5;
   }
 };
 
