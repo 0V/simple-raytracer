@@ -2,14 +2,26 @@
 #define RAYTRACER_MATERIALS_MATERIAL_BASE_H_
 
 struct HitRecord;
+struct ScatteredRecord;
+
 
 #include "vector_utility.h"
 #include "objects/hitable_base.h"
+#include "pdfs/pdf_base.h"
+
+
+struct ScatteredRecord
+{
+  Ray specular_ray;
+  bool is_specular;
+  vec3 attenuation;
+  PdfPtr pdf_ptr;
+};
 
 class MaterialBase
 {
 public:
-  virtual bool scatter(const Ray &r_in, const HitRecord &record, vec3 &albedo, Ray &scattered, double &pdf) const
+  virtual bool scatter(const Ray &r_in, const HitRecord &record, ScatteredRecord &dist) const
   {
     return false;
   }

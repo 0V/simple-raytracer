@@ -5,6 +5,7 @@
 #include "textures/constant_texture.h"
 #include "point_sampler_mc.h"
 #include "onb.h"
+#include "pdfs/lambert_pdf.h"
 
 class Lambertian : public MaterialBase
 {
@@ -16,14 +17,11 @@ public:
 
   Lambertian() {}
   Lambertian(const TexturePtr &albedo_) : albedo(albedo_) {}
-  virtual bool scatter(const Ray &r_in, const HitRecord &record, vec3 &alb, Ray &scattered, double &pdf) const
+  virtual bool scatter(const Ray &r_in, const HitRecord &hrec, ScatteredRecord &dist)  const
   {
-    Onb uvw(record.normal);
-
-    vec3 direction = uvw.local(sampler.sample());
-    scattered = Ray(record.p, direction.normalize(), r_in.time());
-    alb = albedo->value(record.u, record.v, record.p);
-    pdf = uvw.w() * scattered.direction() * M_1_PI;
+    dist.is_specular = false;
+    dist.attenuation = albedo->value(hrec.u, hrec.v, hrec.p);;
+    dist.pdf_ptr = std::make_shared<LambertPdf>(hrec.normal);
     return true;
 
     // vec3 direction;
